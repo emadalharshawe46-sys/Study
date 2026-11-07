@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f1420">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>نظام عماد الدراسي</title>
+<style>
+:root{--bg:#0f1420;--card:#1a2233;--card2:#222c42;--tx:#e8edf7;--mut:#8d9ab5;--ac:#4cc9f0;--ok:#7bd88f;--warn:#ffb454;--bad:#ff6b6b;--bd:#2c3752}
+[data-theme=light]{--bg:#f3f6fb;--card:#fff;--card2:#eef2f9;--tx:#16203a;--mut:#5d6b8a;--ac:#0a7bbf;--ok:#1e9e4a;--warn:#c77700;--bad:#d63b3b;--bd:#d6deec}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;line-height:1.7;font-size:15px}
+#app{max-width:680px;margin:0 auto;padding:12px 12px 96px}
+h2,h3{margin:.2em 0 .4em}h3{font-size:1.02em;color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin:0 0 12px}
+.mut{color:var(--mut);font-size:.86em}
+.btn{background:var(--ac);color:#06202b;border:0;border-radius:12px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer}
+.btn.sec{background:var(--card2);color:var(--tx);border:1px solid var(--bd)}
+.btn.bad{background:var(--bad);color:#fff}.btn.sm{padding:5px 12px;font-size:.88em}
+.btn.ok{background:var(--ok);color:#06240f}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>.grow{flex:1}
+.chip{border:1px solid var(--bd);background:var(--card2);color:var(--tx);border-radius:20px;padding:4px 12px;font:inherit;cursor:pointer}
+.chip.on{background:var(--ac);color:#06202b;border-color:var(--ac);font-weight:700}
+input,select,textarea{background:var(--card2);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:9px;font:inherit;width:100%}
+textarea{min-height:90px;resize:vertical}
+label{display:block;margin:8px 0 3px;font-size:.88em;color:var(--mut)}
+#nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--bd);display:flex;padding:4px 4px calc(4px + env(safe-area-inset-bottom));z-index:20}
+#nav button{flex:1;background:none;border:0;color:var(--mut);font:inherit;font-size:.72em;padding:4px 0;cursor:pointer;border-radius:10px}
+#nav button i{display:block;font-style:normal;font-size:1.5em;line-height:1.2}
+#nav button.on{color:var(--ac);background:var(--card2);font-weight:700}
+.hero{display:flex;gap:14px;align-items:center}
+.ringw{position:relative;width:120px;height:120px;flex:none}.ringw svg{width:120px;height:120px}
+.rb{fill:none;stroke:var(--card2);stroke-width:10}.rf{fill:none;stroke:var(--ac);stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .6s}
+.rt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.rt b{font-size:1.9em;line-height:1}
+.hs div{margin:3px 0}
+.timer{text-align:center}.tm{font-size:3em;font-weight:800;font-variant-numeric:tabular-nums;direction:ltr;letter-spacing:2px}
+.bn{border-radius:12px;padding:10px 12px;margin:0 0 12px;font-weight:600}.bn.bad{background:rgba(255,107,107,.15);border:1px solid var(--bad);color:var(--bad)}
+.bn.info{background:rgba(76,201,240,.12);border:1px solid var(--ac)}
+.task{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)}.task:last-child{border:0}.task span.t{flex:1}
+.bars{display:flex;gap:6px;align-items:flex-end;height:110px;direction:ltr}.bars div.c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:.7em;color:var(--mut)}
+.bars .b{width:100%;border-radius:6px 6px 0 0;background:var(--ac);min-height:2px}.bars .b.ok{background:var(--ok)}
+.pb{height:9px;background:var(--card2);border-radius:6px;overflow:hidden}.pb>i{display:block;height:100%;background:var(--ac)}
+.lrow{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--bd);border-radius:12px;margin:6px 0;cursor:pointer;background:var(--card2)}
+.lrow .tt{flex:1}.dot{width:12px;height:12px;border-radius:50%;flex:none}
+.steps{padding-inline-start:22px;margin:.3em 0}.steps li{margin:7px 0}
+.f{direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;background:var(--card2);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;margin:6px 0;overflow-x:auto;color:var(--ok);font-size:.95em}
+code{direction:ltr;unicode-bidi:isolate;background:var(--card2);padding:1px 6px;border-radius:6px;font-family:ui-monospace,Consolas,monospace;font-size:.92em;color:var(--warn)}
+.svgc svg{width:100%;height:auto;direction:ltr;display:block;color:var(--tx)}
+.goal{background:rgba(76,201,240,.1);padding:8px 10px;border-radius:10px}
+.tip{background:rgba(255,180,84,.12);border-right:4px solid var(--warn);padding:8px 12px;border-radius:10px;margin:0 0 12px}
+table{border-collapse:collapse;width:100%;font-size:.9em}td,th{border:1px solid var(--bd);padding:6px;text-align:center}th{background:var(--card2)}
+.bk{background:none;border:0;color:var(--ac);font:inherit;cursor:pointer;padding:4px 0 10px}
+.q{font-size:1.1em;font-weight:700;margin:6px 0 12px}
+.opt{display:block;width:100%;text-align:start;background:var(--card2);border:2px solid var(--bd);color:var(--tx);border-radius:12px;padding:11px;margin:8px 0;font:inherit;cursor:pointer}
+.opt.right{border-color:var(--ok);background:rgba(123,216,143,.18)}.opt.wrong{border-color:var(--bad);background:rgba(255,107,107,.18)}
+.flash{min-height:190px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:1.15em;cursor:pointer;padding:18px;white-space:pre-wrap}
+.flash.back{color:var(--ok);direction:auto}
+.sw{position:relative;width:48px;height:28px;flex:none}.sw input{opacity:0;width:100%;height:100%;position:absolute;margin:0;z-index:2;cursor:pointer}
+.sw i{position:absolute;inset:0;background:var(--card2);border:1px solid var(--bd);border-radius:20px;transition:.2s}.sw i:after{content:"";position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:var(--mut);transition:.2s}
+.sw input:checked+i{background:var(--ac)}.sw input:checked+i:after{right:23px;background:#fff}
+#modal,#ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:50;display:none;align-items:center;justify-content:center;padding:14px}
+.mb{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:16px;width:100%;max-width:520px;max-height:90vh;overflow:auto}
+#ov{background:#0b0f19;color:#e8edf7;z-index:99;text-align:center}
+#pill{position:fixed;top:8px;left:50%;transform:translateX(-50%);background:var(--ac);color:#06202b;font-weight:800;padding:5px 16px;border-radius:20px;z-index:30;display:none;cursor:pointer;direction:ltr;font-variant-numeric:tabular-nums}.ovb .big{font-size:5em;animation:sh .5s infinite alternate}.ovb .ot{font-size:3.4em;font-weight:800;direction:ltr}
+@keyframes sh{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+#toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:9px 18px;border-radius:20px;z-index:60;display:none;font-weight:700;max-width:90%}
+#fact{position:fixed;top:10px;left:10px;right:10px;max-width:660px;margin:auto;z-index:40;display:none}
+#snd{width:100%;margin:0 0 10px}
+.tag{font-size:.72em;background:var(--card2);border:1px solid var(--bd);border-radius:8px;padding:0 6px;color:var(--mut)}
+.pre{white-space:pre-wrap}
+.gd .bk,.gd .lbtn{display:none}
+.gh{position:sticky;top:0;z-index:10;background:var(--bg);padding:2px 0 8px}
+.gh .card{margin:0;border:2px solid var(--ac)}
+.gt{font-size:2.8em;font-weight:800;direction:ltr;font-variant-numeric:tabular-nums;text-align:center;line-height:1.15}
+.big-start{width:100%;font-size:1.3em;padding:16px;border-radius:16px}
+.tl{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd);align-items:center}.tl b{direction:ltr;unicode-bidi:isolate;min-width:108px;font-size:.9em;color:var(--mut)}
+</style>
+</head>
+<body>
+<div id="app">
+  <button id="snd" class="btn sec" onclick="ac();this.style.display='none'">🔊 اضغط هنا مرة واحدة بعد فتح الصفحة لتفعيل الأصوات</button>
+  <div id="view"></div>
+</div>
+<div id="nav"></div>
+<div id="pill" onclick="go('today')"></div>
+<div id="fact"></div>
+<div id="modal" onclick="if(event.target===this)closeModal()"></div>
+<div id="ov"></div>
+<div id="toast"></div>
+<noscript>يلزم تفعيل JavaScript</noscript>
+
+<script>
+/* ============ البيانات: المواد والدروس ============ */
+const COURSES={
+ dc:{n:'Digital Control Systems',code:'EE462',col:'#4cc9f0',ic:'🎛️'},
+ lab:{n:'Computer and Control Lab',code:'EE461',col:'#7bd88f',ic:'🔬'},
+ pe:{n:'Power Electronics',code:'EE448',col:'#ffb454',ic:'⚡'},
+ de:{n:'Digital Electronics',code:'EE419',col:'#c792ea',ic:'🔢'}
+};
+
+const SVG_LOOP=`<svg viewBox="0 0 380 118" fill="none" stroke="currentColor" stroke-width="1.5" font-family="sans-serif" font-size="10">
+<defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="currentColor" stroke="none"/></marker></defs>
+<text x="2" y="30" fill="currentColor" stroke="none">r[k]</text>
+<line x1="24" y1="40" x2="38" y2="40" marker-end="url(#ar)"/>
+<circle cx="49" cy="40" r="10"/><text x="45" y="44" fill="currentColor" stroke="none">+</text><text x="53" y="62" fill="currentColor" stroke="none">−</text>
+<line x1="59" y1="40" x2="74" y2="40" marker-end="url(#ar)"/>
+<rect x="76" y="23" width="62" height="34" rx="6"/><text x="85" y="44" fill="currentColor" stroke="none">D(z) CPU</text>
+<line x1="138" y1="40" x2="156" y2="40" marker-end="url(#ar)"/>
+<rect x="158" y="23" width="62" height="34" rx="6"/><text x="165" y="44" fill="currentColor" stroke="none">DAC+ZOH</text>
+<line x1="220" y1="40" x2="238" y2="40" marker-end="url(#ar)"/>
+<rect x="240" y="23" width="56" height="34" rx="6"/><text x="254" y="44" fill="currentColor" stroke="none">G(s)</text>
+<line x1="296" y1="40" x2="370" y2="40" marker-end="url(#ar)"/><text x="340" y="32" fill="currentColor" stroke="none">y(t)</text>
+<path d="M330,40 V98 H232" marker-end="url(#ar)"/>
+<rect x="172" y="82" width="60" height="32" rx="6"/><text x="184" y="102" fill="currentColor" stroke="none">ADC (T)</text>
+<path d="M172,98 H49 V52" marker-end="url(#ar)"/>
+</svg>`;
+const SVG_ZCIRCLE=`<svg viewBox="0 0 280 230" fill="none" stroke="currentColor" stroke-width="1.5" font-family="sans-serif" font-size="11">
+<circle cx="120" cy="115" r="85" fill="rgba(123,216,143,.18)" stroke="#7bd88f" stroke-width="2"/>
+<line x1="10" y1="115" x2="270" y2="115"/><line x1="120" y1="8" x2="120" y2="222"/>
+<text x="258" y="108" fill="currentColor" stroke="none">Re</text><text x="126" y="18" fill="currentColor" stroke="none">Im</text>
+<text x="200" y="135" fill="currentColor" stroke="none">1</text><text x="30" y="135" fill="currentColor" stroke="none">−1</text>
+<text x="70" y="75" fill="#7bd88f" stroke="none" font-size="12">STABLE |z|&lt;1</text>
+<text x="168" y="62" fill="#ff6b6b" stroke="none" font-size="12">UNSTABLE</text>
+<g stroke-width="3"><path d="M164,103 l10,12 m0,-12 l-10,12" stroke="#7bd88f"/><path d="M92,103 l10,12 m0,-12 l-10,12" stroke="#7bd88f"/><path d="M228,103 l10,12 m0,-12 l-10,12" stroke="#ff6b6b"/></g>
+<text x="150" y="150" fill="#7bd88f" stroke="none">z=0.6</text><text x="212" y="150" fill="#ff6b6b" stroke="none">z=1.3</text>
+</svg>`;
+const SVG_BUCK=`<svg viewBox="0 0 310 135" fill="none" stroke="currentColor" stroke-width="1.6" font-family="sans-serif" font-size="11">
+<path d="M30,30 H58 M92,30 H112 M112,30 H135 M185,30 H230 M230,30 H275"/>
+<rect x="58" y="19" width="34" height="22" rx="4"/><text x="70" y="34" fill="currentColor" stroke="none">S</text>
+<rect x="135" y="21" width="50" height="18" rx="4"/><text x="155" y="34" fill="currentColor" stroke="none">L</text>
+<path d="M112,30 V52 M112,82 V112"/><rect x="104" y="52" width="16" height="30" rx="3"/><text x="124" y="72" fill="currentColor" stroke="none">D</text>
+<path d="M230,30 V52 M230,82 V112"/><rect x="220" y="52" width="20" height="30" rx="3"/><text x="244" y="72" fill="currentColor" stroke="none">C</text>
+<path d="M275,30 V52 M275,82 V112"/><rect x="266" y="52" width="18" height="30" rx="3"/><text x="288" y="72" fill="currentColor" stroke="none">R</text>
+<path d="M30,30 V52 M30,82 V112"/><rect x="14" y="52" width="32" height="30" rx="3"/><text x="16" y="72" fill="currentColor" stroke="none">Vin</text>
+<path d="M30,112 H275"/><text x="238" y="20" fill="currentColor" stroke="none">Vo</text>
+</svg>`;
+
+const LESSONS=[
+{id:'dc1',c:'dc',t:'بنية نظام التحكم الرقمي وأخذ العينات',g:'أن تفهم ماذا يحدث للإشارة من الحساس إلى المشغّل عبر الحاسوب.',
+ s:['<b>الحساس</b> يعطي إشارة مستمرة y(t) (جهد مثلاً).','<b>ADC</b> يأخذ عينة كل <code>T</code> ثانية فتتحول الإشارة إلى أرقام <code>y[k]=y(kT)</code>.','<b>المعالج</b> يحسب الخطأ <code>e[k]=r[k]−y[k]</code> ثم يطبق قانون التحكم D(z) (معادلة فروق) فيخرج <code>u[k]</code>.','<b>DAC + ZOH</b> يحوّل الرقم إلى جهد ويثبّته ثابتاً طوال الفترة T، فتخرج إشارة سُلّمية.','<b>المشغّل والعملية G(s)</b> تستجيب للإشارة السُلّمية، ثم تتكرر الدورة كل T.'],
+ f:['fs = 1 / T','Nyquist:  fs ≥ 2 · f_max'],svg:SVG_LOOP,
+ ex:{q:'إشارة أعلى تردد فيها 50 Hz. ما أقل تردد عينة نظرياً، وماذا تختار عملياً؟',a:['<code>fs ≥ 2×50 = 100 Hz</code> ⇒ <code>T ≤ 10 ms</code>.','عملياً في التحكم نختار 10–30 ضعف عرض نطاق الحلقة المغلقة، فنأخذ مثلاً 500 Hz إلى 1 kHz، لأن الحلقة تحتاج عينات أكثر من مجرد استرجاع الإشارة.']},
+ tip:'كلما كبرت T قلّ هامش الاستقرار، فالـ ZOH يضيف تأخيراً مكافئاً تقريباً T/2.'},
+{id:'dc2',c:'dc',t:'تحويل Z والقيمة النهائية',g:'أن تحوّل أي متتالية إلى z وتستخدم الجدول والخصائص بثقة.',
+ s:['عرّف التحويل: <code>X(z)=Σ x[k]·z<sup>−k</sup></code> للقيم k=0…∞.','احفظ الأزواج الأساسية من الجدول أدناه.','خاصية التأخير: <code>Z{x[k−1]} = z<sup>−1</sup>X(z)</code> (بشروط ابتدائية صفرية). هذه أساس تحويل z إلى معادلة فروق.','القيمة النهائية: <code>x(∞)=lim<sub>z→1</sub> (z−1)X(z)</code> بشرط أن تكون أقطاب (z−1)X(z) كلها داخل دائرة الوحدة.'],
+ html:'<div class="card"><h3>جدول الأزواج</h3><table dir="ltr"><tr><th>x[k]</th><th>X(z)</th></tr><tr><td>δ[k]</td><td>1</td></tr><tr><td>u[k] (step)</td><td>z/(z−1)</td></tr><tr><td>a<sup>k</sup></td><td>z/(z−a)</td></tr><tr><td>kT (ramp)</td><td>Tz/(z−1)²</td></tr><tr><td>e<sup>−akT</sup></td><td>z/(z−e<sup>−aT</sup>)</td></tr></table></div>',
+ ex:{q:'أوجد X(z) للمتتالية x[k]=0.5<sup>k</sup> ثم قيمتها النهائية.',a:['من الجدول مع <code>a=0.5</code>: <code>X(z)=z/(z−0.5)</code>.','القطب عند 0.5 داخل دائرة الوحدة، فالشرط محقق.','<code>(z−1)·z/(z−0.5)</code> عند z=1 تساوي <code>0</code>.','إذن x(∞)=0، وهذا منطقي لأن 0.5<sup>k</sup> يتلاشى.']},
+ tip:'قبل استخدام نظرية القيمة النهائية افحص الاستقرار دائماً وإلا ستحصل على جواب خاطئ.'},
+{id:'dc3',c:'dc',t:'دالة النقل النبضية مع ZOH',g:'أن تحوّل G(s) إلى G(z) للعملية المسبوقة بماسك ZOH.',
+ s:['اكتب <code>G(s)/s</code> (اضرب في 1/s لأن الماسك يحوّل الإدخال لقفزات).','حلّل بالكسور الجزئية.','حوّل كل حد بجدول Z.','اضرب النتيجة في <code>(1−z<sup>−1</sup>) = (z−1)/z</code>.','تحقق: <code>G(z)|<sub>z=1</sub> = G(s)|<sub>s=0</sub></code> أي الكسب الساكن لا يتغير.'],
+ f:['G(z) = (1 − z⁻¹) · Z{ G(s) / s }'],
+ ex:{q:'G(s)=1/(s+a) مع ZOH وفترة عينة T. أوجد G(z)، ثم اعتبر a=2, T=0.1.',a:['<code>G(s)/s = 1/[s(s+a)] = (1/a)(1/s − 1/(s+a))</code>.','<code>Z = (1/a)[ z/(z−1) − z/(z−e<sup>−aT</sup>) ]</code>.','اضرب في (z−1)/z: <code>(1/a)[1 − (z−1)/(z−e<sup>−aT</sup>)] = (1−e<sup>−aT</sup>) / [a(z−e<sup>−aT</sup>)]</code>.','بالتعويض: <code>e<sup>−0.2</sup>=0.8187</code> فالنتيجة <code>G(z)=0.0906/(z−0.8187)</code>.','فحص: G(1)=0.0906/0.1813=0.5 وهو G(0)=1/a=0.5 ✓.']},
+ tip:'القطب s=−a يصبح z=e^(−aT). كل قطب في s له نظير في z بهذه القاعدة.'},
+{id:'dc4',c:'dc',t:'الاستقرار في المستوى z واختبار Jury',g:'أن تحكم على استقرار نظام رقمي وتجد أعلى كسب مسموح.',
+ s:['اكتب المعادلة المميزة (مقام الحلقة المغلقة): <code>1+KG(z)=0</code>.','الشرط: <b>كل الجذور</b> داخل دائرة الوحدة <code>|z|&lt;1</code>.','للدرجة الثانية <code>P(z)=a₂z²+a₁z+a₀</code> مع a₂&gt;0 استخدم Jury: <code>P(1)&gt;0</code> و <code>P(−1)&gt;0</code> و <code>|a₀|&lt;a₂</code>.','للدرجة الأولى: اجعل الجذر z₁ وتأكد أن <code>|z₁|&lt;1</code>.'],
+ f:['s-plane: Re(s) < 0   ⇔   z-plane: |z| < 1','z = e^(sT)'],svg:SVG_ZCIRCLE,
+ ex:{q:'في المثال السابق G(z)=0.0906/(z−0.8187). أوجد مجال K المستقر في الحلقة المغلقة (تغذية عكسية سالبة).',a:['المعادلة المميزة: <code>1+K·0.0906/(z−0.8187)=0</code> ⇒ <code>z = 0.8187 − 0.0906K</code>.','الشرط: <code>−1 &lt; 0.8187 − 0.0906K &lt; 1</code>.','الطرف الأيمن: <code>K &gt; −2</code>. الطرف الأيسر: <code>0.0906K &lt; 1.8187 ⇒ K &lt; 20.06</code>.','للكسب الموجب: <code>0 &lt; K &lt; 20.06</code>.'],
+ },tip:'نفس النظام المستمر 1/(s+2) مستقر لأي K، لكن الرقمي يفقد الاستقرار عند كسب عالٍ. هذا أثر أخذ العينات.'},
+{id:'dc5',c:'dc',t:'معادلات الفروق والـ PID الرقمي',g:'أن تحوّل G(z) إلى كود قابل للتنفيذ في المتحكم.',
+ s:['اقسم البسط والمقام على أعلى أس لـ z حتى تظهر قوى <code>z<sup>−1</sup></code>.','اضرب بالتقاطع: <code>Y(z)·(المقام) = U(z)·(البسط)</code>.','كل <code>z<sup>−n</sup></code> تعني تأخير n عينات: <code>z<sup>−n</sup>Y ↔ y[k−n]</code>.','اعزل <code>y[k]</code> في طرف: هذه هي الخوارزمية التي تُبرمج.'],
+ f:['PID (velocity form):','u[k] = u[k−1] + Kp(e[k]−e[k−1]) + Ki·T·e[k] + (Kd/T)(e[k]−2e[k−1]+e[k−2])'],
+ ex:{q:'Y/U = 0.5/(z−0.8). أوجد معادلة الفروق وأول استجابات القفزة.',a:['قسمة على z: <code>Y/U = 0.5z<sup>−1</sup>/(1−0.8z<sup>−1</sup>)</code>.','تقاطع: <code>Y(1−0.8z<sup>−1</sup>)=0.5z<sup>−1</sup>U</code>.','<code>y[k]=0.8·y[k−1]+0.5·u[k−1]</code>.','لقفزة u=1: y[0]=0, y[1]=0.5, y[2]=0.9, y[3]=1.22 …','القيمة النهائية: <code>0.5/(1−0.8)=2.5</code> (تطابق G(1)=0.5/0.2).']},
+ tip:'الشكل السرعي (velocity) أفضل عملياً لأنه يسهّل منع تراكم التكامل (anti-windup).'},
+
+{id:'lab1',c:'lab',t:'تعريف النظام من استجابة القفزة',g:'أن تستخرج نموذج الرتبة الأولى K وτ من تجربة عملية.',
+ s:['طبّق قفزة إدخال Δu ثابتة وسجّل الخرج حتى الاستقرار.','الكسب: <code>K = Δy(∞) / Δu</code>.','الثابت الزمني τ: الزمن الذي يصل فيه الخرج إلى <b>63.2%</b> من قيمته النهائية.','اكتب النموذج: <code>G(s)=K/(τs+1)</code>.','تحقق: زمن الاستقرار (2%) ≈ 4τ.'],
+ f:['G(s) = K / (τ s + 1)','y(t) = K·Δu·(1 − e^(−t/τ))'],
+ ex:{q:'قفزة Δu=2 V أعطت خرجاً مستقراً Δy=5 V ووصل إلى 3.16 V عند 0.8 s.',a:['<code>K=5/2=2.5</code>.','63.2% من 5 تساوي 3.16 V ⇒ <code>τ=0.8 s</code>.','<code>G(s)=2.5/(0.8s+1)</code>.','زمن الاستقرار ≈ 4×0.8 = 3.2 s.']},
+ tip:'سجّل عدة تجارب وخذ المتوسط، فالضوضاء تفسد قراءة نقطة 63%.'},
+{id:'lab2',c:'lab',t:'المحوّلات ADC/DAC والدقة',g:'أن تحسب الدقة وخطأ التكميم وتحوّل الكود إلى جهد.',
+ s:['عدد المستويات: <code>2<sup>n</sup></code>.','حجم الخطوة: <code>LSB = Vref / 2<sup>n</sup></code>.','خطأ التكميم: <code>±LSB/2</code>.','تحويل القراءة: <code>V = code × LSB</code>.'],
+ f:['LSB = Vref / 2^n','V = code · Vref / 2^n'],
+ ex:{q:'ADC بدقة 12-bit ومرجع 3.3 V. ما LSB وما جهد القراءة 2048؟',a:['<code>2<sup>12</sup>=4096</code> مستوى.','<code>LSB=3.3/4096=0.806 mV</code>.','<code>V=2048×0.806 mV=1.65 V</code> أي نصف المدى.']},
+ tip:'بعض المحوّلات تستخدم القسمة على (2ⁿ−1)، فراجع ورقة بيانات الشريحة.'},
+{id:'lab3',c:'lab',t:'التعديل النبضي PWM',g:'أن تتحكم بالقدرة المتوسطة بتغيير دورة العمل.',
+ s:['دورة العمل: <code>D = t<sub>on</sub>/T</code>.','المتوسط: <code>V<sub>avg</sub> = D × V<sub>dc</sub></code>.','اختر تردد PWM أعلى بكثير من تردد استجابة الحمل ليتم التنعيم.','في متحكم 8-bit: <code>D ≈ value/255</code>.'],
+ f:['Vavg = D · Vdc','D = ton / T'],
+ ex:{q:'متحكم 8-bit بمصدر 5 V، القيمة المكتوبة 128. ما الجهد المتوسط؟',a:['<code>D=128/255≈50.2%</code>.','<code>Vavg=0.502×5≈2.5 V</code>.']},
+ tip:'تردد PWM عالٍ يقلل التموج لكنه يزيد فقد التبديل، فهي مفاضلة.'},
+{id:'lab4',c:'lab',t:'ضبط PID بطريقة Ziegler–Nichols',g:'أن تضبط متحكماً عملياً بخطوات ثابتة.',
+ s:['اجعل <code>Ti=∞</code> و <code>Td=0</code> (P فقط).','ارفع Kp تدريجياً حتى تظهر <b>اهتزازات مستمرة</b>. هذا هو Ku.','قس زمن دورة الاهتزاز: Pu.','طبق الجدول: PID ⇒ <code>Kp=0.6Ku, Ti=Pu/2, Td=Pu/8</code>.','عدّل يدوياً قليلاً لتقليل التجاوز.'],
+ f:['P:   Kp = 0.5 Ku','PI:  Kp = 0.45 Ku , Ti = Pu/1.2','PID: Kp = 0.6 Ku , Ti = Pu/2 , Td = Pu/8','Ki = Kp/Ti ,  Kd = Kp·Td'],
+ ex:{q:'Ku=8 و Pu=2 s. أوجد معاملات PID.',a:['<code>Kp=0.6×8=4.8</code>.','<code>Ti=2/2=1 s</code>, <code>Td=2/8=0.25 s</code>.','<code>Ki=4.8/1=4.8</code>, <code>Kd=4.8×0.25=1.2</code>.']},
+ tip:'الطريقة تعطي عادةً تجاوزاً كبيراً (~25%)، فهي نقطة بداية وليست النهاية.'},
+
+{id:'pe1',c:'pe',t:'عناصر القدرة ومفهوم التبديل',g:'أن تعرف العنصر المناسب لكل تطبيق وتحسب الكفاءة.',
+ s:['المفتاح المثالي: جهد صفر وهو مغلق وتيار صفر وهو مفتوح، فلا فقد.','الفقد الحقيقي = فقد توصيل + فقد تبديل.','الكفاءة: <code>η = P<sub>o</sub>/P<sub>in</sub></code>.','الفقد: <code>P<sub>loss</sub> = P<sub>in</sub> − P<sub>o</sub></code>.'],
+ html:'<div class="card"><h3>مقارنة سريعة</h3><table><tr><th>العنصر</th><th>التحكم</th><th>الاستخدام</th></tr><tr><td>Diode</td><td>لا يوجد</td><td>مقومات</td></tr><tr><td>Thyristor (SCR)</td><td>تشغيل فقط بنبضة بوابة، يُطفأ عند تيار صفر</td><td>قدرة عالية، تردد منخفض</td></tr><tr><td>MOSFET</td><td>كامل (جهد)</td><td>تردد عالٍ، جهد منخفض</td></tr><tr><td>IGBT</td><td>كامل (جهد)</td><td>قدرة متوسطة/عالية</td></tr></table></div>',
+ ex:{q:'Pin=100 W و Po=92 W. أوجد الكفاءة والفقد.',a:['<code>η=92/100=92%</code>.','<code>Ploss=100−92=8 W</code> تتحول إلى حرارة فيلزم مبرد.']},
+ tip:'كل واط تخسره يعني حرارة، وتصميم المبرد جزء أساسي من التصميم.'},
+{id:'pe2',c:'pe',t:'المقومات: غير المتحكمة والمتحكمة',g:'أن تحسب الجهد المتوسط لأي مقوم أحادي الطور.',
+ s:['اكتب الجهد على الحمل خلال دورة واحدة.','طبّق <code>V<sub>dc</sub> = (1/T)∫v dt</code> على الفترة الموصلة فقط.','استخدم الجدول أدناه كنتيجة جاهزة وافهم من أين جاء.','في المتحكمة أضف زاوية الإشعال α.'],
+ f:['Half-wave:  Vdc = Vm/π ,  Vrms = Vm/2','Full-wave:   Vdc = 2Vm/π , Vrms = Vm/√2','Half-wave controlled (R): Vdc = Vm(1+cosα)/(2π)','Full bridge controlled (R): Vdc = Vm(1+cosα)/π','Full bridge, very inductive load: Vdc = 2Vm·cosα/π'],
+ ex:{q:'شبكة 220 V rms أي Vm=311 V. احسب Vdc لجسر كامل، ثم لجسر متحكم α=60° بحمل مقاومي، ثم بحمل حثي عالٍ.',a:['كامل غير متحكم: <code>2×311/π=198 V</code>.','متحكم، حمل R: <code>311(1+cos60°)/π=311×1.5/π=148.5 V</code>.','متحكم، حمل حثي: <code>2×311×cos60°/π=99 V</code>.']},
+ tip:'مع الحمل الحثي العالي يمكن أن يصبح Vdc سالباً عند α&gt;90° فيعمل المقوم كعاكس.'},
+{id:'pe3',c:'pe',t:'محولات DC-DC: Buck / Boost / Buck-Boost',g:'أن تستنتج نسبة التحويل بميزان الفولت-ثانية وتحسب التموج.',
+ s:['افترض الحالة المستقرة CCM: <b>متوسط جهد الملف خلال الدورة = صفر</b> (ميزان الفولت-ثانية).','أثناء الإغلاق DT: <code>V<sub>L</sub>=V<sub>in</sub>−V<sub>o</sub></code> (Buck).','أثناء الفتح (1−D)T: <code>V<sub>L</sub>=−V<sub>o</sub></code>.','ساوِ المجموع بالصفر: <code>(Vin−Vo)D = Vo(1−D)</code> ⇒ <code>Vo=D·Vin</code>.','تموج تيار الملف: <code>ΔiL = Vo(1−D)/(L·f)</code>.'],
+ f:['Buck:       Vo = D·Vin','Boost:      Vo = Vin / (1−D)','Buck-Boost: Vo = −D·Vin / (1−D)','ΔiL (buck) = Vo(1−D)/(L·f)','ΔVo = ΔiL / (8·f·C)'],svg:SVG_BUCK,
+ ex:{q:'Buck: Vin=24 V, Vo=12 V, f=50 kHz, L=100 µH. أوجد D وتموج تيار الملف.',a:['<code>D=Vo/Vin=0.5</code>.','<code>ΔiL=12×0.5/(100×10<sup>−6</sup>×50×10<sup>3</sup>)=6/5=1.2 A</code>.','تحقق: Boost بـ Vin=12 V و D=0.6 يعطي <code>12/0.4=30 V</code>.']},
+ tip:'Buck يخفض فقط، Boost يرفع فقط، Buck-Boost يعكس القطبية.'},
+{id:'pe4',c:'pe',t:'العاكسات (Inverters)',g:'أن تحسب جهد الخرج الأساسي للعاكس بالموجة المربعة وبـ SPWM.',
+ s:['عاكس جسر كامل: يعطي ±Vdc على الحمل.','الموجة المربعة: الجهد الفعال الكلي <code>=Vdc</code>.','المركبة الأساسية: <code>V<sub>1,rms</sub>=4Vdc/(π√2)≈0.9·Vdc</code>.','في SPWM: <code>m<sub>a</sub>=V<sub>control</sub>/V<sub>tri</sub></code> والذروة الأساسية <code>=m<sub>a</sub>·Vdc</code> (للمجال الخطي m<sub>a</sub>≤1).'],
+ f:['Square wave: Vo,rms = Vdc','V1,rms = 4Vdc/(π√2) ≈ 0.9 Vdc','SPWM: V1,peak = ma · Vdc'],
+ ex:{q:'Vdc=400 V. أوجد المركبة الأساسية للموجة المربعة وذروة SPWM بـ ma=0.8.',a:['مربعة: <code>0.9×400=360 V rms</code>.','SPWM: <code>0.8×400=320 V peak</code> ⇒ <code>320/√2≈226 V rms</code>.']},
+ tip:'SPWM يعطي توافقيات أقل بكثير وتسهل تصفيتها لأنها عند ترددات عالية.'},
+
+{id:'de1',c:'de',t:'الأنظمة العددية ومكمل 2',g:'أن تحوّل بين الأنظمة وتمثّل الأعداد السالبة بدقة.',
+ s:['عشري → ثنائي: اقسم على 2 وسجّل البواقي من الأسفل إلى الأعلى.','ثنائي → سداسي عشري: جمّع كل 4 بتّات.','لتمثيل <code>−N</code> بمكمل 2: اكتب N ثنائياً، اقلب البتّات، أضف 1.','مدى n بت: <code>−2<sup>n−1</sup> … 2<sup>n−1</sup>−1</code>.'],
+ f:['range(n bits, 2’s comp) = −2^(n−1) … 2^(n−1) − 1'],
+ ex:{q:'حوّل 45 إلى ثنائي، ثم اكتب −5 بـ 8 بت، ثم 0xB7 ثنائياً.',a:['45 = 32+8+4+1 ⇒ <code>101101</code>.','5 = <code>00000101</code> ⇒ قلب <code>11111010</code> ⇒ +1 ⇒ <code>11111011</code>.','B=1011, 7=0111 ⇒ <code>10110111</code>.']},
+ tip:'للتحقق من الناتج السالب: اجمعه مع الموجب فيجب أن تحصل على صفر (مع تجاهل الحمل).'},
+{id:'de2',c:'de',t:'جبر بول وخريطة كارنو',g:'أن تبسّط أي دالة بخريطة K-map بخطوات ثابتة.',
+ s:['حوّل الدالة إلى جدول حقيقة أو Σm.','ارسم الخريطة بترتيب Gray: <code>00,01,11,10</code>.','ضع 1 في كل minterm.','جمّع الواحدات في مربعات/مستطيلات بأحجام 1,2,4,8 (الأكبر أولاً، ويُسمح بالالتفاف حول الحواف).','لكل مجموعة: أبقِ المتغيرات التي لا تتغير، واحذف التي تتغير.','اجمع (OR) حدود المجموعات.'],
+ f:['De Morgan:  (A·B)′ = A′ + B′ ,  (A+B)′ = A′ · B′','A + A′B = A + B','A ⊕ B = A′B + AB′'],
+ html:'<div class="card"><h3>مثال: F = Σm(0,2,5,7)</h3><table dir="ltr"><tr><th>A \\ BC</th><th>00</th><th>01</th><th>11</th><th>10</th></tr><tr><th>0</th><td style="background:rgba(123,216,143,.3)">1</td><td>0</td><td>0</td><td style="background:rgba(123,216,143,.3)">1</td></tr><tr><th>1</th><td>0</td><td style="background:rgba(255,180,84,.3)">1</td><td style="background:rgba(255,180,84,.3)">1</td><td>0</td></tr></table><p class="mut">الأخضر: m0,m2 ⇒ A′C′ (B يتغير فحُذف). البرتقالي: m5,m7 ⇒ AC.</p></div>',
+ ex:{q:'بسّط F(A,B,C)=Σm(0,2,5,7).',a:['الجدول أعلاه: مجموعتان من حدّين.','المجموعة الأولى تبقى فيها A=0 و C=0 ⇒ <code>A′C′</code>.','المجموعة الثانية تبقى فيها A=1 و C=1 ⇒ <code>AC</code>.','<code>F = A′C′ + AC</code> وهي XNOR بين A و C.']},
+ tip:'لا تنسَ أن الخانات الأربع في الزوايا تشكل مجموعة واحدة (التفاف).'},
+{id:'de3',c:'de',t:'القلّابات (Flip-Flops)',g:'أن تعرف المعادلة المميزة لكل قلاب وتستخدمها في التصميم.',
+ s:['القلاب يخزن بتّاً واحداً ويتغير عند حافة الساعة.','استخدم <b>المعادلة المميزة</b> لمعرفة الحالة التالية Q⁺.','جدول الإثارة (excitation) هو معكوسها: ما المدخل اللازم للانتقال من Q إلى Q⁺؟'],
+ f:['D:  Q⁺ = D','T:  Q⁺ = T ⊕ Q','JK: Q⁺ = J·Q′ + K′·Q','SR: Q⁺ = S + R′·Q   (S·R = 0)'],
+ html:'<div class="card"><h3>جدول JK</h3><table dir="ltr"><tr><th>J</th><th>K</th><th>Q⁺</th></tr><tr><td>0</td><td>0</td><td>Q (hold)</td></tr><tr><td>0</td><td>1</td><td>0 (reset)</td></tr><tr><td>1</td><td>0</td><td>1 (set)</td></tr><tr><td>1</td><td>1</td><td>Q′ (toggle)</td></tr></table></div>',
+ ex:{q:'JK بـ J=K=1 وQ=0 قبل حافة الساعة. ما Q بعدها؟',a:['<code>Q⁺=J·Q′+K′·Q=1·1+0·0=1</code>.','يقلب الحالة (toggle) فتصبح Q=1.']},
+ tip:'حالة SR=11 ممنوعة، لهذا اخترع JK ليستغلها كحالة toggle.'},
+{id:'de4',c:'de',t:'تصميم الدوائر التتابعية والعدادات',g:'أن تصمم عدّاداً أو آلة حالات بخطوات منظمة.',
+ s:['ارسم مخطط الحالات من الوصف.','حوّله إلى جدول حالة (الحالة الحالية، المدخل، الحالة التالية، الخرج).','رمّز الحالات بالبتّات واختر نوع القلاب.','من جدول الإثارة استخرج معادلات مداخل القلابات.','بسّط المعادلات بـ K-map.','ارسم الدائرة وتحقق بالمحاكاة.'],
+ f:['T flip-flop excitation:  T = Q ⊕ Q⁺'],
+ ex:{q:'صمّم عدّاداً تصاعدياً mod-4 بقلابات T.',a:['التسلسل: 00→01→10→11→00.','Q0 يتغير كل نبضة ⇒ <code>T0=1</code>.','Q1 يتغير فقط عندما Q0=1 (01→10 و 11→00) ⇒ <code>T1=Q0</code>.','دائرة بقلابين فقط وبدون أي بوابات إضافية.']},
+ tip:'Moore: الخرج يعتمد على الحالة فقط. Mealy: على الحالة والمدخل.'},
+{id:'de5',c:'de',t:'التوقيت وعائلات المنطق',g:'أن تحسب أقصى تردد ساعة وهوامش الضجيج.',
+ s:['زمن الدورة الأدنى: <code>T<sub>min</sub> = t<sub>cq</sub> + t<sub>logic</sub> + t<sub>setup</sub></code>.','أقصى تردد: <code>f<sub>max</sub>=1/T<sub>min</sub></code>.','هامش الضجيج العالي: <code>NM<sub>H</sub>=V<sub>OH</sub>−V<sub>IH</sub></code>.','هامش الضجيج المنخفض: <code>NM<sub>L</sub>=V<sub>IL</sub>−V<sub>OL</sub></code>.'],
+ f:['Tmin = tcq + tlogic + tsetup','NMH = VOH − VIH ,  NML = VIL − VOL'],
+ ex:{q:'tcq=2 ns, tlogic=8 ns, tsetup=1 ns. وكذلك VOH=3.4, VIH=2.0, VOL=0.2, VIL=0.8 V.',a:['<code>Tmin=2+8+1=11 ns</code> ⇒ <code>fmax≈90.9 MHz</code>.','<code>NMH=3.4−2.0=1.4 V</code>.','<code>NML=0.8−0.2=0.6 V</code>.']},
+ tip:'شرط Hold لا يتأثر بتردد الساعة، لذا لا تحله بخفض التردد.'}
+];
+
+/* أسئلة: [مادة، درس، السؤال، [الخيارات]، رقم الصحيح، الشرح] */
+const QS=[
+['dc','dc1','ما وظيفة الماسك ZOH؟',['تضخيم الإشارة','تثبيت قيمة العينة طوال فترة T','إزالة الضوضاء','تحويل Z إلى S'],1,'يثبّت u[k] ثابتاً حتى العينة التالية فينتج إشارة سُلّمية.'],
+['dc','dc1','أعلى تردد في إشارة 200 Hz. أقل fs نظرياً؟',['100 Hz','200 Hz','400 Hz','800 Hz'],2,'fs ≥ 2·fmax = 400 Hz.'],
+['dc','dc2','تحويل Z للقفزة الوحدة u[k]؟',['1','z/(z−1)','1/(z−1)','z/(z+1)'],1,'من الجدول: z/(z−1).'],
+['dc','dc2','X(z)=z/(z−0.5). القيمة النهائية؟',['0','0.5','2','∞'],0,'(z−1)X عند z=1 تساوي 0، والقطب 0.5 داخل دائرة الوحدة.'],
+['dc','dc3','تُحسب G(z) لعملية مسبوقة بـ ZOH من؟',['Z{G(s)}','(1−z⁻¹)·Z{G(s)/s}','Z{1/G(s)}','استبدال s بـ z'],1,'القاعدة الأساسية للـ ZOH.'],
+['dc','dc3','G(s)=1/(s+2), T=0.1. أين قطب G(z)؟',['z=0.2','z=0.8187','z=−2','z=1.2'],1,'z=e^(−aT)=e^(−0.2)=0.8187.'],
+['dc','dc4','النظام الرقمي مستقر إذا كانت أقطابه…',['في النصف الأيسر من s','داخل دائرة الوحدة','خارج دائرة الوحدة','على المحور الحقيقي'],1,'|z|<1 لكل الأقطاب.'],
+['dc','dc4','z²−1.2z+0.35 له جذران 0.7 و0.5. النظام؟',['مستقر','غير مستقر','حدّي','لا يمكن الحكم'],0,'كلا الجذرين داخل دائرة الوحدة.'],
+['dc','dc5','Y/U=0.5/(z−0.8). معادلة الفروق؟',['y[k]=0.8y[k−1]+0.5u[k−1]','y[k]=0.5y[k−1]+0.8u[k−1]','y[k]=0.8y[k+1]+0.5u[k]','y[k]=0.5u[k]−0.8'],0,'قسمة على z ثم تقاطع ثم تأخير.'],
+['dc','dc5','القيمة النهائية لقفزة وحدة في Y/U=0.5/(z−0.8)؟',['0.5','1','2.5','5'],2,'G(1)=0.5/(1−0.8)=2.5.'],
+['lab','lab1','في الرتبة الأولى، τ هو الزمن للوصول إلى؟',['50%','63.2%','86.5%','98%'],1,'y=K(1−e^(−1))=0.632K.'],
+['lab','lab1','Δu=2V وتغير الخرج 5V. قيمة K؟',['0.4','2.5','7','10'],1,'K=5/2.'],
+['lab','lab2','ADC بدقة 10-bit ومرجع 5V. قيمة LSB؟',['0.5 mV','4.88 mV','9.8 mV','48.8 mV'],1,'5/1024=4.88 mV.'],
+['lab','lab2','كم مستوى لـ ADC بدقة 12-bit؟',['1024','2048','4096','8192'],2,'2¹²=4096.'],
+['lab','lab3','PWM بدورة عمل 25% ومصدر 12V. المتوسط؟',['3 V','6 V','9 V','25 V'],0,'0.25×12=3 V.'],
+['lab','lab3','زيادة تردد PWM مع ثبات D يؤدي إلى…',['تغيير المتوسط','تقليل التموج في الحمل الحثي','زيادة المتوسط','لا شيء'],1,'المتوسط ثابت =D·Vdc لكن التموج يقل.'],
+['lab','lab4','في Z-N لـ PID: Kp=؟',['0.45Ku','0.5Ku','0.6Ku','Ku'],2,'PID: Kp=0.6Ku.'],
+['lab','lab4','Ku=8 و Pu=2 s. قيمة Ti لـ PID؟',['0.25 s','1 s','2 s','4 s'],1,'Ti=Pu/2=1 s.'],
+['pe','pe1','أي عنصر يُشغَّل بنبضة بوابة ويُطفأ عند تيار صفر؟',['MOSFET','IGBT','Thyristor (SCR)','Diode'],2,'خاصية الـ SCR.'],
+['pe','pe1','Pin=100W وPo=92W. الكفاءة والفقد؟',['92% و8W','8% و92W','100% و0','92% و92W'],0,'η=92/100 والفقد 8W.'],
+['pe','pe2','Vdc لمقوم نصف موجة غير متحكم؟',['Vm/π','2Vm/π','Vm/2','Vm/√2'],0,'Vdc=Vm/π.'],
+['pe','pe2','Vm=311V، جسر كامل غير متحكم. Vdc؟',['99 V','198 V','220 V','311 V'],1,'2Vm/π=198 V.'],
+['pe','pe2','جسر متحكم، حمل حثي عالٍ، α=60°، Vm=311V؟',['198 V','148.5 V','99 V','0 V'],2,'2Vm·cosα/π=99 V.'],
+['pe','pe3','Boost: Vin=12V وD=0.6. Vo؟',['7.2 V','18 V','30 V','20 V'],2,'12/(1−0.6)=30 V.'],
+['pe','pe3','في الحالة المستقرة، متوسط جهد الملف خلال الدورة؟',['Vin','Vo','صفر','D·Vin'],2,'ميزان الفولت-ثانية.'],
+['pe','pe3','Buck: Vin=24, D=0.5, f=50kHz, L=100µH. تموج التيار؟',['0.6 A','1.2 A','2.4 A','12 A'],1,'Vo(1−D)/(Lf)=12×0.5/5=1.2 A.'],
+['pe','pe4','عاكس جسر كامل بموجة مربعة وVdc=400V. الجهد الفعال الكلي؟',['283 V','360 V','400 V','566 V'],2,'الموجة ±Vdc فالفعّال=Vdc.'],
+['pe','pe4','SPWM بـ ma=0.8 وVdc=400V. ذروة الأساسي؟',['200 V','320 V','400 V','500 V'],1,'ma·Vdc=320 V.'],
+['de','de1','(45)₁₀ بالثنائي؟',['101101','101011','110101','100101'],0,'32+8+4+1.'],
+['de','de1','−5 بـ 8 بت مكمل 2؟',['10000101','11111010','11111011','00000101'],2,'قلب 00000101 ثم +1.'],
+['de','de1','مدى 8 بت بمكمل 2؟',['0…255','−127…127','−128…127','−256…255'],2,'−2⁷…2⁷−1.'],
+['de','de2','(A·B)′ بحسب De Morgan؟',['A′·B′','A′+B′','A+B','A·B′'],1,'النفي يحوّل AND إلى OR.'],
+['de','de2','تبسيط Σm(0,2,5,7)؟',['A′C′ + AC','A′B + AB′','C','A⊕C'],0,'مجموعتان (m0,m2) و(m5,m7).'],
+['de','de3','المعادلة المميزة لـ JK؟',['Q⁺=J·Q′+K′·Q','Q⁺=J+K','Q⁺=J·K','Q⁺=J⊕K'],0,'القانون القياسي.'],
+['de','de3','JK عند J=K=1 يكون؟',['Set','Reset','Toggle','Hold'],2,'يقلب الحالة.'],
+['de','de4','أول خطوة لتصميم دائرة تتابعية؟',['رسم الدائرة','مخطط/جدول الحالات من الوصف','اختيار البوابات','حساب التأخير'],1,'نبدأ من الوصف إلى مخطط الحالات.'],
+['de','de4','عداد mod-4 بقلابات T. قيمة T1؟',['1','Q0','Q0′','Q1'],1,'Q1 يتبدل فقط عندما Q0=1.'],
+['de','de5','tcq=2, tlogic=8, tsetup=1 ns. أقصى تردد؟',['≈90.9 MHz','≈100 MHz','≈125 MHz','≈500 MHz'],0,'1/11ns.'],
+['de','de5','VOH=3.4 وVIH=2.0. NMH؟',['0.6 V','1.4 V','2.0 V','3.4 V'],1,'NMH=VOH−VIH.']
+];
+
+/* بطاقات: [مادة، وجه، ظهر] */
+const CARDS=[
+['dc','قانون Nyquist للعينات؟','fs ≥ 2·fmax'],
+['dc','العلاقة بين s و z؟','z = e^(sT)'],
+['dc','صيغة G(z) مع ZOH؟','G(z) = (1−z⁻¹)·Z{G(s)/s}'],
+['dc','شرط استقرار النظام الرقمي؟','كل الأقطاب داخل دائرة الوحدة |z|<1'],
+['dc','Z للقفزة u[k]؟','z/(z−1)'],
+['dc','Z لـ a^k؟','z/(z−a)'],
+['dc','نظرية القيمة النهائية بـ z؟','x(∞)=lim z→1 (z−1)X(z) بشرط الاستقرار'],
+['dc','معنى z⁻¹؟','تأخير بعينة واحدة T'],
+['dc','اختبار Jury للدرجة 2؟','P(1)>0 , P(−1)>0 , |a0|<a2'],
+['lab','كيف تقيس τ من استجابة القفزة؟','الزمن للوصول إلى 63.2% من القيمة النهائية'],
+['lab','LSB لـ ADC؟','Vref / 2ⁿ'],
+['lab','خطأ التكميم؟','±½ LSB'],
+['lab','متوسط جهد PWM؟','Vavg = D·Vdc'],
+['lab','Z-N: معاملات PID؟','Kp=0.6Ku , Ti=Pu/2 , Td=Pu/8'],
+['lab','أول خطوة في Z-N؟','P فقط: Ti=∞ و Td=0 ثم رفع Kp حتى اهتزاز مستمر'],
+['pe','Buck: Vo؟','Vo = D·Vin'],
+['pe','Boost: Vo؟','Vo = Vin/(1−D)'],
+['pe','Buck-Boost: Vo؟','Vo = −D·Vin/(1−D)'],
+['pe','نصف موجة: Vdc؟','Vm/π'],
+['pe','جسر كامل: Vdc؟','2Vm/π'],
+['pe','جسر متحكم، حمل R: Vdc؟','Vm(1+cosα)/π'],
+['pe','جسر متحكم، حمل حثي عالٍ: Vdc؟','2Vm·cosα/π'],
+['pe','ميزان الفولت-ثانية؟','متوسط جهد الملف خلال دورة في الحالة المستقرة = 0'],
+['pe','تموج جهد المكثف في Buck؟','ΔVo = ΔiL/(8·f·C)'],
+['pe','المركبة الأساسية للعاكس المربع؟','V1,rms ≈ 0.9·Vdc'],
+['pe','كيف يُطفأ الـ SCR؟','بجعل تيار الأنود أقل من تيار الإمساك (تيار صفر)'],
+['de','مكمل 2 لعدد؟','اقلب كل البتّات ثم أضف 1'],
+['de','معادلة قلاب T؟','Q⁺ = T ⊕ Q'],
+['de','معادلة قلاب D؟','Q⁺ = D'],
+['de','معادلة JK؟','Q⁺ = J·Q′ + K′·Q'],
+['de','حالة ممنوعة في SR؟','S=R=1'],
+['de','ترتيب الخانات في K-map؟','Gray code: 00,01,11,10'],
+['de','Setup time؟','أقل زمن يجب أن تثبت فيه البيانات قبل حافة الساعة'],
+['de','Hold time؟','أقل زمن يجب أن تثبت فيه البيانات بعد حافة الساعة'],
+['de','NMH و NML؟','NMH=VOH−VIH ، NML=VIL−VOL'],
+['de','De Morgan؟','(AB)′=A′+B′ ، (A+B)′=A′B′']
+];
+
+/* ============ الحالة والتخزين ============ */
+const K='emad-study-v1';
+const $=(s,e=document)=>e.querySelector(s);
+const p2=n=>String(n).padStart(2,'0');
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sdate=()=>new Date(Date.now()-5*36e5);
+const dk=(d=sdate())=>d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
+const nowHM=()=>{const n=new Date();return p2(n.getHours())+':'+p2(n.getMinutes())};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const ALLDAYS=[0,1,2,3,4,5,6],DN=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const defAlarms=()=>[
+ {id:'a1',time:'19:45',label:'حان وقت الكتلة 1',days:ALLDAYS.slice(),sound:'bell',on:true,blk:1,auto:true},
+ {id:'a2',time:'21:30',label:'حان وقت الكتلة 2',days:ALLDAYS.slice(),sound:'bell',on:true,blk:2,auto:true},
+ {id:'a3',time:'23:00',label:'حان وقت الكتلة 3: حل مسائل',days:ALLDAYS.slice(),sound:'bell',on:true,blk:3,auto:true},
+ {id:'a4',time:'00:15',label:'المراجعة الختامية',days:ALLDAYS.slice(),sound:'bell',on:true,blk:4,auto:true},
+ {id:'a5',time:'00:55',label:'أغلق الكتب وراجع ملخص يومك ثم نم',days:ALLDAYS.slice(),sound:'chime',on:true,blk:0,studyOnly:true},
+ {id:'a6',time:'08:00',label:'☀️ حان وقت الجلسة الصباحية',days:ALLDAYS.slice(),sound:'bell',on:true,blk:5,auto:true}];
+const def=()=>({ver:5,set:{goal:240,sound:'bell',vol:.7,factOn:true,factH:2,wake:false,theme:'dark',cutoff:'01:00',name:'عماد',city:'zintan',lat:31.93,lng:12.25,method:'egypt',off:0,gap:60,snoozeMax:2,snoozeOpts:[5,10,15],am:{4:{t:'08:00',m:90}}},
+ alarms:defAlarms(),sess:[],blk:{},post:{},snz:[],done:{},box:{},wrong:[],day:{},qh:[],ln:{},cust:{cards:[],qs:[],lessons:[]},timer:null,lastFact:0,lastSeen:Date.now(),fired:{}});
+function loadState(raw){const o=Object.assign(def(),raw);o.set=Object.assign(def().set,raw.set||{});o.cust=Object.assign(def().cust,raw.cust||{});o.ver=raw.ver||1;
+ if(o.ver<2){o.alarms=defAlarms();if(o.set.goal===120)o.set.goal=240;if(o.set.cutoff==='22:30')o.set.cutoff='01:00';o.timer=null;o.ver=2}
+ if(o.ver<3){o.alarms.forEach(a=>{if(a.blk)a.auto=true});o.ver=3}
+ if(o.ver<4){o.alarms.forEach(a=>{if(a.id==='a5')a.studyOnly=true});o.set.gap=60;o.ver=4}
+ if(o.ver<5){if(!o.alarms.some(a=>a.id==='a6'))o.alarms.push({id:'a6',time:'08:00',label:'☀️ حان وقت الجلسة الصباحية',days:ALLDAYS.slice(),sound:'bell',on:true,blk:5,auto:true});o.ver=5}
+ if(!o.blk)o.blk={};if(!o.post)o.post={};if(!o.snz)o.snz=[];return o}
+let S;
+try{S=loadState(JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){S=def()}
+let lastSave=0;
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+document.documentElement.setAttribute('data-theme',S.set.theme);
+
+/* ============ الصوت ============ */
+let AC=null;
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){return null}}if(AC.state==='suspended')AC.resume();$('#snd').style.display='none';return AC}
+const SND={
+ bell:{n:'جرس',seq:[[880,0,1.4,'sine'],[1760,0,.9,'sine'],[1320,.55,1.2,'sine'],[880,1.1,1.4,'sine']],loop:3.2},
+ beep:{n:'صفارة',seq:[[1000,0,.16,'square'],[1000,.26,.16,'square'],[1000,.52,.16,'square']],loop:1.6},
+ digital:{n:'رقمي',seq:[[800,0,.1,'square'],[1200,.12,.1,'square'],[800,.24,.1,'square'],[1200,.36,.1,'square']],loop:1.2},
+ melody:{n:'لحن',seq:[[523,0,.35,'triangle'],[659,.3,.35,'triangle'],[784,.6,.35,'triangle'],[1047,.9,.8,'triangle']],loop:2.6},
+ chime:{n:'رنين ناعم',seq:[[1047,0,.9,'sine'],[1319,.25,.9,'sine'],[1568,.5,1.3,'sine']],loop:3.2},
+ siren:{n:'سارينة (قوي)',seq:[[600,0,.4,'sawtooth'],[900,.4,.4,'sawtooth'],[600,.8,.4,'sawtooth'],[900,1.2,.4,'sawtooth']],loop:1.7}
+};
+function tone(f,t0,d,type,vol){const c=ac();if(!c)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime+t0;o.type=type;o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(vol,.001),t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+.05)}
+function play(name){const s=SND[name]||SND.bell;s.seq.forEach(x=>tone(x[0],x[1],x[2],x[3],S.set.vol*.6))}
+let loopT=null;
+function playLoop(name){stopLoop();play(name);loopT=setInterval(()=>play(name),(SND[name]||SND.bell).loop*1000)}
+function stopLoop(){clearInterval(loopT);loopT=null}
+function notify(t,b){try{if('Notification' in window&&Notification.permission==='granted')new Notification(t,{body:b})}catch(e){}}
+async function setWake(on){try{if(on){wl=await navigator.wakeLock.request('screen')}else if(wl){await wl.release();wl=null}}catch(e){}}
+let wl=null;
+document.addEventListener('visibilitychange',()=>{const t=S.timer;
+ if(document.visibilityState==='hidden'){if(t&&t.kind==='study'&&t.since&&!t.hid)t.hid=Date.now();save()}
+ else{if(t&&t.hid){t.away=(t.away||0)+(Date.now()-t.hid);t.hid=0}if(S.set.wake||S.timer)setWake(true);checkMissed();tick()}});
+
+/* ============ مساعدات الواجهة ============ */
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',2200)}
+function openModal(h){const m=$('#modal');m.innerHTML='<div class="mb">'+h+'</div>';m.style.display='flex'}
+function closeModal(){$('#modal').style.display='none';$('#modal').innerHTML=''}
+const dayMin=k=>S.sess.filter(s=>s.d===k).reduce((a,s)=>a+s.m,0);
+const base=()=>new Date(Date.now()-5*3600e3);
+const dkey=()=>dk(base());
+const nightKey=ts=>dk(new Date(ts-5*3600e3));
+const todayMin=()=>dayMin(dkey());
+function streak(){let n=0,d=sdate();const g0=goalFor(d);if(g0>0&&dayMin(dk(d))>=g0)n++;for(let i=0;i<400;i++){d.setDate(d.getDate()-1);const g=goalFor(d);if(g===0)continue;if(dayMin(dk(d))>=g)n++;else break}return n}
+const allLessons=()=>LESSONS.concat(S.cust.lessons);
+const allQ=()=>QS.map((q,i)=>({id:'b'+i,c:q[0],l:q[1],q:q[2],o:q[3],a:q[4],e:q[5]})).concat(S.cust.qs);
+const allC=()=>CARDS.map((c,i)=>({id:'k'+i,c:c[0],f:c[1],b:c[2]})).concat(S.cust.cards);
+const dueCards=()=>{const n=Date.now();return allC().filter(c=>{const b=S.box[c.id];return !b||b.due<=n})};
+function nextLesson(){const by={};LESSONS.forEach(l=>(by[l.c]=by[l.c]||[]).push(l));const order=[];for(let i=0;i<6;i++)['dc','pe','de','lab'].forEach(c=>by[c][i]&&order.push(by[c][i]));const nd=order.find(l=>!S.done[l.id]);return nd||order[(Math.floor(Date.now()/864e5))%order.length]}
+const fmt=s=>{s=Math.max(0,Math.floor(s));const h=s/3600|0,m=(s%3600)/60|0;return (h?h+':':'')+p2(m)+':'+p2(s%60)};
+function greet(){const h=new Date().getHours();return (h<5?'سهر موفق':h<12?'صباح الخير':h<17?'نهارك سعيد':h<21?'مساء الخير':'مساء النور')+' يا '+esc(S.set.name)}
+const QUOTES=['الانضباط هو الجسر بين الأهداف والإنجاز.','ساعة اليوم أفضل من عشر ساعات قبل الامتحان.','لا تنتظر الحافز، ابدأ وسيأتي.','كل مسألة تحلها بنفسك تساوي عشر مسائل تقرؤها.','مهندس التحكم يفهم الخطأ ثم يصحّحه، وافعل ذلك مع نفسك.','خمس دقائق بداية كافية لكسر التسويف.','الاستمرار يهزم الموهبة.'];
+
+/* ============ التنقل ============ */
+let tab='today',lid=null,Qs=null,Cs=null;
+const TABS=[['today','🏠','اليوم'],['lessons','📚','الدروس'],['quiz','📝','اختبار'],['cards','🃏','بطاقات'],['alarms','⏰','المنبهات'],['more','⚙️','المزيد']];
+function go(t){tab=t;lid=null;render();scrollTo(0,0)}
+function render(){
+ const ga=gActive(),tabs=ga?[['guide','🎯','الجلسة']].concat(TABS):TABS;
+ if(tab==='guide'&&!S.guide)tab='today';
+ const nav=$('#nav');nav.style.display=(ga&&tab==='guide')?'none':'flex';
+ nav.innerHTML=tabs.map(t=>`<button class="${tab===t[0]?'on':''}" onclick="go('${t[0]}')"><i>${t[1]}</i>${t[2]}</button>`).join('');
+ $('#view').innerHTML=({today:vToday,lessons:vLessons,quiz:vQuiz,cards:vCards,alarms:vAlarms,more:vMore,guide:vGuide})[tab]();
+}
+
+/* ============ اليوم ============ */
+function elapsed(){const t=S.timer;if(!t)return 0;return t.acc+(t.since?Date.now()-t.since:0)}
+/* ===== وقت العشاء وتخطيط الكتل ===== */
+const RAD=Math.PI/180;
+const CITIES={zintan:['الزنتان',31.93,12.25],tripoli:['طرابلس',32.89,13.19],misrata:['مصراتة',32.38,15.09],benghazi:['بنغازي',32.12,20.07],sabha:['سبها',27.04,14.43]};
+const METHODS={egypt:['الهيئة المصرية للمساحة (17.5°)',17.5],mwl:['رابطة العالم الإسلامي (17°)',17],karachi:['كراتشي (18°)',18],umm:['أم القرى (المغرب + 90 د)',0]};
+const fmtM=x=>p2(Math.floor(x/60)%24)+':'+p2(Math.round(x)%60);
+function nowStudyMin(){const n=new Date(),m=n.getHours()*60+n.getMinutes();return n.getHours()<5?m+1440:m}
+function sunInfo(d){
+ const jd=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate(),12)/864e5+2440587.5,D=jd-2451545;
+ const fx=(a,n)=>((a%n)+n)%n,g=fx(357.529+0.98560028*D,360)*RAD,q=fx(280.459+0.98564736*D,360);
+ const L=fx(q+1.915*Math.sin(g)+0.02*Math.sin(2*g),360)*RAD,e=(23.439-3.6e-7*D)*RAD;
+ const RA=fx(Math.atan2(Math.cos(e)*Math.sin(L),Math.cos(L))/RAD/15,24);
+ let eqt=q/15-RA;if(eqt>12)eqt-=24;if(eqt<-12)eqt+=24;
+ return {dec:Math.asin(Math.sin(e)*Math.sin(L)),eqt};
+}
+function ishaCalc(d){
+ const s=sunInfo(d),lat=S.set.lat*RAD,tz=-d.getTimezoneOffset()/60,noon=12+tz-S.set.lng/15-s.eqt;
+ const hrs=A=>Math.acos((-Math.sin(A*RAD)-Math.sin(lat)*Math.sin(s.dec))/(Math.cos(lat)*Math.cos(s.dec)))/RAD/15;
+ const m=METHODS[S.set.method]||METHODS.egypt;
+ return Math.round((m[1]?noon+hrs(m[1]):noon+hrs(0.833)+1.5)*60);
+}
+function ishaFor(d){if(S.ishaMan&&S.ishaMan.d===dk(d))return S.ishaMan.m;return ishaCalc(d)+(+S.set.off||0)}
+const schedFor=day=>{const v=(S.sched||{})[day];if(v!==undefined)return v==='rest'?null:v;return SCHED[day]};
+function blockSpec(d){
+ const sc=schedFor(d.getDay());if(!sc)return [];
+ const list=BLK.filter(b=>b.n!==2||sc!=='weak').map(b=>({n:b.n,m:b.m}));
+ const cp=S.set.cutoff.split(':').map(Number),cmm=cp[0]*60+cp[1],endm=cmm<300?cmm+1440:cmm;
+ const start=ishaFor(d)+(+S.set.gap||0),fit=()=>endm-start-15*(list.length-1);
+ [2,3].forEach(n=>{if(fit()<list.length*30){const i=list.findIndex(b=>b.n===n);if(i>=0)list.splice(i,1)}});
+ const sum=list.reduce((a,b)=>a+b.m,0),avail=fit();
+ if(avail<sum){const f=Math.max(.3,avail/sum);list.forEach(b=>b.m=Math.max(15,Math.round(b.m*f/5)*5))}
+ const tot=()=>list.reduce((a,b)=>a+b.m,0);
+ while(tot()>avail&&list.some(b=>b.m>15)){const mx=list.reduce((a,b)=>b.m>a.m?b:a);mx.m-=5}
+ let cur=start;list.forEach(b=>{b.s=cur;b.t=fmtM(cur);cur+=b.m+15});
+ return list;
+}
+const goalFor=d=>Math.min(S.set.goal,Math.floor(blockSpec(d).reduce((a,b)=>a+b.m,0)*0.9/5)*5);
+function amSpec(d){
+ const a=(S.set.am||{})[d.getDay()];if(!a||!schedFor(d.getDay()))return [];
+ const p=String(a.t).split(':').map(Number),s=p[0]*60+(p[1]||0);
+ return [{n:5,m:+a.m||90,s:s,t:fmtM(s),am:true}];
+}
+const amExpired=b=>!!b.am&&nowStudyMin()>b.s+b.m+120;
+function dayBlocks(){
+ const d=sdate(),sc=schedFor(d.getDay());if(!sc)return [];const w=sc==='weak'?planWeak():sc;
+ const ev=blockSpec(d).map(b=>{let kind,title;
+  if(b.n===1){kind=sc==='weak'?'test':'study';title=sc==='weak'?'اختبار الأسبوع + أضعف مادة':'دراسة الدرس'}
+  else if(b.n===2){kind='study';title='دراسة الدرس (تكملة وأمثلة)'}
+  else if(b.n===3){kind='practice';title='حل مسائل'}
+  else{kind='review';title='مراجعة: بطاقات + اختبار'}
+  return Object.assign({},b,{c:w,kind,title})});
+ const am=amSpec(d).map(b=>Object.assign({},b,{c:w,kind:'study',title:'دراسة صباحية'}));
+ return am.concat(ev);
+}
+function setAm(d,on){S.set.am=S.set.am||{};if(on)S.set.am[d]={t:'08:00',m:90};else delete S.set.am[d];save();render()}
+function setAmF(d,k,v){if(!S.set.am||!S.set.am[d])return;S.set.am[d][k]=v;save();render()}
+function amCard(){
+ const am=S.set.am||{};
+ return `<div class="card"><h3>☀️ جلسات صباحية</h3><p class="mut">جلسة إضافية لمادة اليوم نفسها. تُحتسب ضمن وقتك المسجَّل ولا تدخل في هدف اليوم المطلوب، وتُعدّ فائتة إن لم تبدأها خلال ساعتين من نهايتها.</p>${[6,0,1,2,3,4,5].map(d=>{const a=am[d],has=!!schedFor(d);
+  return `<div class="task"><label class="sw"><input type="checkbox" ${a?'checked':''} onchange="setAm(${d},this.checked)"><i></i></label><span class="t">${DN[d]}${has?'':' <span class="mut">(راحة)</span>'}</span>${a?`<input type="time" value="${esc(a.t)}" style="width:112px" onchange="setAmF(${d},'t',this.value)"><input type="number" min="15" max="240" step="5" value="${+a.m||90}" style="width:78px" onchange="setAmF(${d},'m',+this.value||90)">`:''}</div>`}).join('')}</div>`;
+}
+function setSched(day,v){S.sched=S.sched||{};S.sched[day]=v;save();render()}
+function schedCard(){
+ const opt=day=>{const cur=schedFor(day),val=cur===null?'rest':cur;return ['rest',...Object.keys(COURSES),'weak'].map(k=>`<option value="${k}" ${val===k?'selected':''}>${k==='rest'?'🛌 راحة':k==='weak'?'🔁 مراجعة الأسبوع':COURSES[k].ic+' '+COURSES[k].n}</option>`).join('')};
+ return `<div class="card"><h3>📅 جدول الأسبوع</h3><p class="mut">مادة واحدة لكل يوم. غيّر أي يوم من هنا.</p>${[6,0,1,2,3,4,5].map(d=>`<div class="task"><span class="t">${DN[d]}</span><select style="width:64%" onchange="setSched(${d},this.value)">${opt(d)}</select></div>`).join('')}</div>`;
+}
+function setCity(v){const c=CITIES[v];S.set.city=v;S.set.lat=c[1];S.set.lng=c[2];save();render()}
+function calibrate(){const v=$('#cal').value;if(!v)return toast('اكتب الوقت أولاً');const p=v.split(':').map(Number);S.set.off=p[0]*60+p[1]-ishaCalc(sdate());S.ishaMan=null;save();toast('تمت المعايرة: '+(S.set.off>=0?'+':'')+S.set.off+' د');render()}
+function pinToday(){const v=$('#cal').value;if(!v)return toast('اكتب الوقت أولاً');const p=v.split(':').map(Number);S.ishaMan={d:dk(),m:p[0]*60+p[1]};save();toast('تم تثبيت وقت اليوم');render()}
+function setOpt(x){const a=S.set.snoozeOpts,i=a.indexOf(x);if(i<0)a.push(x);else if(a.length>1)a.splice(i,1);a.sort((p,q)=>p-q);save();render()}
+function ishaCard(){
+ const d=sdate(),calc=ishaCalc(d),fin=ishaFor(d),man=S.ishaMan&&S.ishaMan.d===dk(d);
+ const rows=[...Array(7)].map((_,i)=>{const x=sdate();x.setDate(x.getDate()+i);const sp=blockSpec(x),last=sp[sp.length-1];
+  return `<tr><td>${DN[x.getDay()]}</td><td>${(()=>{const q=schedFor(x.getDay());return q==='weak'?'مراجعة':q?COURSES[q].code:'راحة'})()}</td><td dir="ltr">${fmtM(ishaFor(x))}</td><td dir="ltr">${sp.length?sp[0].t:'—'}</td><td dir="ltr">${sp.length?fmtM(last.s+last.m):'—'}</td></tr>`}).join('');
+ return `<div class="card"><h3>🕌 وقت العشاء والتأجيل</h3>
+ <p class="mut">لا أستطيع ربط هذا الملف بتطبيق «مؤذن ليبيا» مباشرة. بدلاً من ذلك يحسب التطبيق العشاء فلكياً بدون إنترنت ليومٍ بيومٍ فيتغير وحده، وتعايره مرة واحدة على تطبيق مؤذن ليبيا.</p>
+ <div class="bn info">اليوم: محسوب <b dir="ltr">${fmtM(calc)}</b> · المعتمد <b dir="ltr">${fmtM(fin)}</b>${man?' (مثبّت يدوياً)':''}</div>
+ <label>المدينة</label><select onchange="setCity(this.value)">${Object.entries(CITIES).map(([k,c])=>`<option value="${k}" ${S.set.city===k?'selected':''}>${c[0]}</option>`).join('')}</select>
+ <label>طريقة الحساب</label><select onchange="S.set.method=this.value;save();render()">${Object.entries(METHODS).map(([k,m])=>`<option value="${k}" ${S.set.method===k?'selected':''}>${m[0]}</option>`).join('')}</select>
+ <label>اكتب وقت العشاء اليوم كما يظهر في مؤذن ليبيا</label><div class="row"><input type="time" id="cal" style="flex:1;min-width:120px"><button class="btn sm" onclick="calibrate()">معايرة لكل الأيام</button><button class="btn sec sm" onclick="pinToday()">لليوم فقط</button></div>
+ <label>تعديل يدوي بالدقائق (موجب أو سالب)</label><input type="number" value="${+S.set.off||0}" onchange="S.set.off=+this.value||0;save();render()">
+ <label>الفاصل بين العشاء وبداية الكتلة 1 (دقائق)</label><input type="number" min="0" value="${+S.set.gap||0}" onchange="S.set.gap=Math.max(0,+this.value||0);save();render()">
+ <label>أقصى مرات تأجيل لكل كتلة</label><input type="number" min="0" max="5" value="${S.set.snoozeMax}" onchange="S.set.snoozeMax=Math.max(0,Math.min(5,+this.value||0));save()">
+ <label>خيارات التأجيل (دقائق)</label><div class="row">${[5,10,15,20,30].map(x=>`<button class="chip ${S.set.snoozeOpts.includes(x)?'on':''}" onclick="setOpt(${x})">${x}</button>`).join('')}</div>
+ <h3 style="margin-top:14px">الأسبوع القادم</h3><table><tr><th>اليوم</th><th>المادة</th><th>العشاء</th><th>بدء الكتل</th><th>انتهاء اليوم</th></tr>${rows}</table>
+ <p class="mut">إذا طال الوقت صيفاً وتأخر العشاء، تُقصَّر الكتل (وقد تُحذف الثانية) تلقائياً لتنتهي قبل ${S.set.cutoff}. قارن الجدول مع مؤذن ليبيا بعد أسبوع وأعد المعايرة إن اختلف.</p></div>`;
+}
+
+const SCHED={6:'pe',0:'lab',1:'dc',2:'de',3:null,4:'lab',5:null};
+const BLK=[{n:1,t:'19:45',m:90},{n:2,t:'21:30',m:75},{n:3,t:'23:00',m:60},{n:4,t:'00:15',m:40}];
+const TASK={study:'📖 اقرأ خطوات الدرس، ثم أعد حل المثال على ورقة قبل رؤية الحل.',practice:'✍️ حل مسائل بدون النظر للحل (من محاضراتك أو من اختبار المادة) واكتب كل خطوة.',review:'🔁 راجع البطاقات المستحقة ثم أجرِ الاختبار اليومي.',test:'📝 اختبر نفسك في أضعف مادة هذا الأسبوع ثم افهم كل خطأ.'};
+function isLate(){const n=new Date(),nm=n.getHours()*60+n.getMinutes(),p=S.set.cutoff.split(':').map(Number),cm=p[0]*60+p[1];return (nm-300+1440)%1440>=(cm-300+1440)%1440}
+function planWeak(){
+ if(!S.plan||S.plan.d!==dk()){const w=sdate();w.setDate(w.getDate()-6);const wk=dk(w);let best='dc',bm=1e9;
+  Object.keys(COURSES).forEach(k=>{const m=S.sess.filter(s=>s.c===k&&s.d>=wk).reduce((a,s)=>a+s.m,0);if(m<bm){bm=m;best=k}});
+  S.plan={d:dk(),w:best};save()}
+ return S.plan.w}
+const blockRec=b=>(S.blk[dk()]||{})[b.n]||null;
+const blockDone=b=>{const r=blockRec(b);return !!r&&r.m>=b.m*0.8};
+function pickBlock(n){const pend=dayBlocks().filter(b=>!blockDone(b)&&!amExpired(b));if(n){const x=pend.find(b=>b.n===n);if(x)return x}return pend[0]||null}
+const nextOf=c=>(allLessons().filter(l=>l.c===c).find(l=>!S.done[l.id])||allLessons().find(l=>l.c===c)).id;
+function taskBtns(b){const k=b?b.kind:'study',c=b?b.c:'dc';
+ if(k==='review')return `<button class="btn sm" onclick="startCards('due')">🃏 البطاقات</button><button class="btn sm" onclick="startQuiz('daily')">📝 اختبار اليوم</button>`;
+ if(k==='practice'||k==='test')return `<button class="btn sm" onclick="startQuiz('course','${c}')">📝 اختبار المادة</button><button class="btn sm" onclick="openL('${nextOf(c)}')">📖 الدرس</button>`;
+ return `<button class="btn sm" onclick="openL('${nextOf(c)}')">📖 افتح الدرس</button><button class="btn sm" onclick="startQuiz('course','${c}')">📝 اختبار المادة</button>`}
+function pillUpd(){const pl=$('#pill');if(!pl)return;
+ if(S.timer&&tab!=='today'){const t=S.timer;pl.textContent=(t.kind==='break'?'☕ ':'⏱️ ')+fmt(t.target*60-elapsed()/1000);pl.style.display='block'}else pl.style.display='none'}
+
+function vToday(){
+ const sd=sdate(),g=goalFor(sd),t=S.timer,live=todayMin()+(t&&t.kind==='study'?elapsed()/60000:0),pct=g?Math.min(100,live/g*100):100,C=2*Math.PI*52;
+ const late=isLate()&&live<g,dd=S.day[dk()]||{},nl=nextLesson(),due=dueCards().length;
+ const dc=[dd.lesson,dd.quiz,dd.cards].filter(Boolean).length,blocks=dayBlocks(),nb=pickBlock();
+ let timer;
+ if(t&&t.kind==='study'){
+  const b=blocks.find(x=>x.n===t.blk),cc=COURSES[t.course]||COURSES.dc;
+  timer=`<h3>⏱️ ${cc.ic} ${cc.code} · ${cc.n}</h3><div class="mut">الكتلة ${t.blk}${b?': '+esc(b.title):''}</div><div class="tm" id="tm">00:00</div>
+  <div class="goal" style="margin:8px 0">${TASK[b?b.kind:'study']}</div><div class="row" style="justify-content:center">${taskBtns(b)}</div>
+  <div class="row" style="justify-content:center;margin-top:12px">${t.since?'<button class="btn sec sm" onclick="tPause()">⏸ توقف طارئ</button>':'<button class="btn sm" onclick="tResume()">▶ استئناف</button>'}<button class="btn sec sm" onclick="tFinish()">إنهاء مبكر</button></div>
+  <p class="mut">النظام يسجّل بداية الجلسة ونهايتها ومدتها تلقائياً.</p>`;
+ }else if(t&&t.kind==='break'){
+  timer=`<h3>☕ استراحة</h3><div class="tm" id="tm">00:00</div><p class="mut">سأنبّهك عند انتهائها.${nb?' التالي: الكتلة '+nb.n+' · '+COURSES[nb.c].code:''}</p>${nb?`<button class="btn" style="width:100%" onclick="startBlock(${nb.n})">▶ ابدأ الكتلة ${nb.n} الآن</button>`:''}`;
+ }else{
+  timer=!blocks.length?`<h3>🛌 يوم راحة</h3><p class="mut">لا كتل ولا منبهات اليوم. لك أن تراجع البطاقات أو تجري اختباراً إن أحببت.</p>`:`<h3>🎯 جلسات اليوم (يديرها النظام)</h3><p class="mut">🕌 العشاء اليوم ${fmtM(ishaFor(sd))} · ${blocks.some(x=>x.am)?'الصباحية '+blocks.find(x=>x.am).t+' · ':''}تبدأ الكتلة 1 عند ${(blocks.find(x=>x.n===1)||blocks[0]).t}</p>`+blocks.map(b=>{const done=blockDone(b),r=blockRec(b),cc=COURSES[b.c],isn=nb&&nb.n===b.n;
+   return `<div class="task"><span>${done?'✅':isn?'▶️':(amExpired(b)?'⌛':'⏳')}</span><span class="t"><b dir="ltr" style="unicode-bidi:isolate">${b.t}</b> · ${cc.ic} ${cc.code} <span class="mut">(${b.m} د · ${esc(b.title)})${r&&!done?' · أنجزت '+Math.round(r.m)+' د':''}</span></span></div>`}).join('')
+   +(nb?`<p><button class="btn" style="width:100%;font-size:1.15em" onclick="startBlock(${nb.n})">▶ ${nb.am?'ابدأ الجلسة الصباحية':'ابدأ الكتلة '+nb.n}: ${COURSES[nb.c].code}</button></p>`:`<p class="bn info">🏁 أنهيت كل كتل اليوم. أحسنت!</p>`);
+ }
+ const mx=Math.max(g,1,...[...Array(7)].map((_,i)=>{const d=sdate();d.setDate(d.getDate()-i);return dayMin(dk(d))}));
+ const bars=[...Array(7)].map((_,i)=>{const d=sdate();d.setDate(d.getDate()-(6-i));const m=dayMin(dk(d));return `<div class="c"><span>${Math.round(m)}</span><div class="b ${m>=goalFor(d)?'ok':''}" style="height:${m/mx*80}%"></div><span>${DN[d.getDay()].slice(0,3)}</span></div>`}).join('');
+ const wkd=sdate();wkd.setDate(wkd.getDate()-6);const wkk=dk(wkd);
+ const dist=Object.entries(COURSES).map(([k,c])=>{const m=S.sess.filter(s=>s.c===k&&s.d>=wkk).reduce((a,s)=>a+s.m,0);return `<div class="mut">${c.ic} ${c.code} — ${Math.round(m)} د</div><div class="pb"><i style="width:${Math.min(100,m/(Math.max(g,60)*7/4)*100)}%;background:${c.col}"></i></div>`}).join('');
+ const prog=Object.entries(COURSES).map(([k,c])=>{const ls=allLessons().filter(l=>l.c===k),dn=ls.filter(l=>S.done[l.id]).length;return `<div class="mut">${c.ic} ${c.code}: ${dn}/${ls.length} دروس</div><div class="pb"><i style="width:${ls.length?dn/ls.length*100:0}%;background:${c.col}"></i></div>`}).join('');
+ const qa=S.qh.slice(-10),qavg=qa.length?Math.round(qa.reduce((a,x)=>a+x.s/x.n,0)/qa.length*100):null;
+ const hm=x=>{const d=new Date(x);return p2(d.getHours())+':'+p2(d.getMinutes())};
+ const lg=S.sess.slice(-8).reverse().map(s=>{const c=COURSES[s.c];return `<div class="task"><span>${c?c.ic:''}</span><span class="t">${c?c.code:''}${s.s?' · <span dir="ltr" style="unicode-bidi:isolate">'+hm(s.s)+' → '+hm(s.e)+'</span>':''}${s.b?' · كتلة '+s.b:''}${s.aw>=1?' · خارج الصفحة '+s.aw+' د':''}${s.dl>=5?' · تأخر '+s.dl+' د':''}${s.pp?' · أجّلت '+s.pp+'×':''} <span class="mut">${s.d}</span></span><b>${Math.round(s.m)} د</b></div>`}).join('');
+ return `${late?`<div class="bn bad">⛔ انتهى وقت اليوم (${S.set.cutoff}) ولم تكمل ${g} دقيقة. أكمل ما تبقى الآن.</div>`:''}
+ <div class="card hero"><div class="ringw"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" class="rb"/><circle id="ringc" cx="60" cy="60" r="52" class="rf" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct/100)}" transform="rotate(-90 60 60)"/></svg><div class="rt"><b id="rm">${Math.floor(live)}</b><small>${g?'من '+g+' د':'يوم راحة'}</small></div></div>
+ <div class="hs"><div><b>${greet()}</b></div><div>🔥 <b>${streak()}</b> يوم متتالي</div><div>✅ مهام اليوم: ${dc}/3</div><div class="mut">${QUOTES[sd.getDay()]}</div></div></div>
+ <div class="card ${t?'timer':''}">${timer}</div>
+ <div class="card"><h3>📋 مهام التطبيق اليوم</h3>
+  <div class="task"><span>${dd.lesson?'✅':'⬜'}</span><span class="t">درس: ${esc(nl.t)}</span><button class="btn sm" onclick="openL('${nl.id}')">افتح</button></div>
+  <div class="task"><span>${dd.quiz?'✅':'⬜'}</span><span class="t">اختبار اليوم (5 أسئلة)</span><button class="btn sm" onclick="startQuiz('daily')">ابدأ</button></div>
+  <div class="task"><span>${dd.cards?'✅':'⬜'}</span><span class="t">بطاقات مستحقة (${due})</span><button class="btn sm" onclick="startCards('due')">راجع</button></div></div>
+ ${lg?`<div class="card"><h3>📜 سجلّ آخر الجلسات</h3>${lg}</div>`:''}
+ <div class="card"><h3>📊 آخر 7 أيام (الأخضر = حققت الهدف)</h3><div class="bars">${bars}</div></div>
+ <div class="card"><h3>🧭 توزيع وقتك هذا الأسبوع</h3>${dist}</div>
+ <div class="card"><h3>📈 تقدم الدروس</h3>${prog}${qavg!==null?`<p class="mut">متوسط آخر ${qa.length} اختبارات: <b>${qavg}%</b></p>`:''}</div>`;
+}
+
+function startBlock(n){
+ ac();const b=pickBlock(n);if(!b){toast('أنهيت كل كتل اليوم 🏁');return}
+ const r=blockRec(b),target=r?Math.max(10,Math.round(b.m-r.m)):b.m;
+ stopLoop();$('#ov').style.display='none';curA=null;closeModal();
+ S.timer={kind:'study',course:b.c,blk:b.n,target,acc:0,since:Date.now(),startTs:Date.now(),away:0,hid:0,dl:nowStudyMin()-b.s};
+ setWake(true);save();tab='today';lid=null;render();scrollTo(0,0);play('digital');toast('بدأت الكتلة '+b.n+' · '+target+' دقيقة');
+}
+function tPause(){const t=S.timer;if(!t)return;t.acc=elapsed();t.since=null;save();render()}
+function tResume(){if(!S.timer)return;S.timer.since=Date.now();save();render()}
+function tFinish(auto){
+ const t=S.timer;if(!t)return;
+ if(t.kind==='break'){S.timer=null;if(!S.set.wake)setWake(false);save();render();
+  if(auto){const nb=pickBlock();fire({label:nb?'انتهت الاستراحة! الكتلة '+nb.n+': '+COURSES[nb.c].code:'انتهت الاستراحة',sound:'bell',blk:nb?nb.n:0})}
+  return}
+ if(!auto&&!confirm('إنهاء الجلسة الآن؟ سيُسجَّل الوقت المنجز فقط.'))return;
+ if(t.hid){t.away=(t.away||0)+(Date.now()-t.hid);t.hid=0}
+ const m=Math.round(elapsed()/6000)/10,aw=Math.round((t.away||0)/6000)/10;S.timer=null;
+ if(m>=0.1){S.sess.push({d:dk(),c:t.course,m,b:t.blk,s:t.startTs,e:Date.now(),aw,dl:t.dl,pp:S.post[dk()+'#'+t.blk]||0});const bk=(S.blk[dk()]=S.blk[dk()]||{});bk[t.blk]={m:(bk[t.blk]?bk[t.blk].m:0)+m}}
+ const b=dayBlocks().find(x=>x.n===t.blk),full=!!b&&blockDone(b),nb=pickBlock();let nx='';
+ if(full&&nb&&b&&b.am){nx=`<p>✅ أنهيت الجلسة الصباحية. التالية: الكتلة ${nb.n} الساعة ${nb.t} (${COURSES[nb.c].code}).</p>`}
+ else if(full&&nb){S.timer={kind:'break',target:15,acc:0,since:Date.now()};nx=`<p>☕ بدأت استراحة 15 دقيقة تلقائياً وسأنبّهك عند انتهائها. التالي: الكتلة ${nb.n} (${COURSES[nb.c].code}).</p>`}
+ else if(!full&&b){const r=blockRec(b);nx=`<p class="mut">الكتلة ناقصة (${Math.round(r?r.m:0)} من ${b.m} د). عند ضغط «ابدأ» سأطلب منك إكمال المتبقي فقط.</p>`}
+ else if(!nb)nx='<p>🏁 أنهيت كل كتل اليوم. أحسنت يا '+esc(S.set.name)+'!</p>';
+ if(!S.set.wake&&!S.timer)setWake(false);
+ save();render();
+ if(auto){playLoop('melody');setTimeout(stopLoop,9000)}
+ openModal(`<h2>${auto?'🎉 انتهت الجلسة!':'تم تسجيل الجلسة'}</h2><p>سُجّل <b>${m}</b> دقيقة في ${COURSES[t.course]?COURSES[t.course].code:''}.${aw>=1?` <span class="mut">(كنت خارج الصفحة ${aw} د)</span>`:''}</p><p>مجموع اليوم: <b>${Math.round(todayMin())}</b> من ${goalFor(sdate())} دقيقة.</p>${nx}<button class="btn" onclick="stopLoop();closeModal()" style="width:100%">حسناً</button>`);
+}
+function openL(id){tab='lessons';lid=id;render();scrollTo(0,0)}
+
+/* ============ الدروس ============ */
+function vLessons(){
+ if(lid){const L=allLessons().find(x=>x.id===lid);if(L)return vLesson(L);lid=null}
+ return Object.entries(COURSES).map(([k,c])=>`<div class="card" style="border-top:4px solid ${c.col}"><h3 style="color:${c.col}">${c.ic} ${c.code} · ${c.n}</h3>${allLessons().filter(l=>l.c===k).map(l=>`<div class="lrow" onclick="openL('${l.id}')"><span class="dot" style="background:${S.done[l.id]?'var(--ok)':'var(--bd)'}"></span><span class="tt">${esc(l.t)} ${l.body?'<span class="tag">دربي</span>':''}</span><span>‹</span></div>`).join('')}</div>`).join('')+`<button class="btn sec" onclick="addLesson()" style="width:100%">➕ أضف درساً أو ملخصاً من عندك</button>`;
+}
+function vLesson(L){
+ const C=COURSES[L.c],ln=esc(S.ln[L.id]||'');
+ const head=`<button class="bk" onclick="lid=null;render()">→ رجوع للدروس</button><div class="card" style="border-top:4px solid ${C.col}"><div class="mut">${C.ic} ${C.code} · ${C.n}</div><h2>${esc(L.t)}</h2>${L.g?`<p class="goal">🎯 ${L.g}</p>`:''}</div>`;
+ const foot=`<div class="card"><h3>✍️ ملاحظاتي على الدرس</h3><textarea oninput="S.ln['${L.id}']=this.value;save()" placeholder="اكتب ما لم تفهمه أو ما تريد تذكره...">${ln}</textarea></div>
+ <div class="row lbtn"><button class="btn ok grow" onclick="markL('${L.id}')">${S.done[L.id]?'✔ تمت دراسته (أعد التسجيل)':'✔ فهمت الدرس'}</button><button class="btn sec grow" onclick="startQuiz('lesson','${L.id}')">📝 اختبر نفسك</button></div>${L.body?`<p><button class="btn bad sm" onclick="delCust('lessons','${L.id}')">حذف هذا الدرس</button></p>`:''}`;
+ if(L.body)return head+`<div class="card pre">${esc(L.body)}</div>`+foot;
+ return head+`<div class="card"><h3>الخطوات بالترتيب</h3><ol class="steps">${L.s.map(x=>`<li>${x}</li>`).join('')}</ol></div>
+ ${L.f?`<div class="card"><h3>القوانين الأساسية</h3>${L.f.map(x=>`<div class="f">${x}</div>`).join('')}</div>`:''}
+ ${L.svg?`<div class="card svgc">${L.svg}</div>`:''}${L.html||''}
+ <div class="card"><h3>🧮 مثال محلول</h3><p>${L.ex.q}</p><details open><summary style="cursor:pointer;color:var(--ac)">الحل خطوة بخطوة</summary><ol class="steps">${L.ex.a.map(x=>`<li>${x}</li>`).join('')}</ol></details></div>
+ ${L.tip?`<div class="tip">💡 ${L.tip}</div>`:''}`+foot;
+}
+function markL(id){S.done[id]=true;(S.day[dkey()]=S.day[dkey()]||{}).lesson=true;save();toast('أحسنت! سُجّل الدرس ✔');render()}
+
+/* ============ الاختبار ============ */
+function startQuiz(mode,arg){
+ const pool=allQ();let list;
+ if(mode==='daily'){const w=shuffle(pool.filter(x=>S.wrong.includes(x.id))).slice(0,2);list=w.concat(shuffle(pool.filter(x=>!w.includes(x))))}
+ else if(mode==='course')list=shuffle(pool.filter(x=>x.c===arg)).slice(0,8);
+ else if(mode==='lesson')list=shuffle(pool.filter(x=>x.l===arg));
+ else if(mode==='week')list=shuffle(pool).slice(0,15);
+ else list=shuffle(pool.filter(x=>S.wrong.includes(x.id)));
+ if(mode==='daily')list=list.slice(0,5);
+ if(!list.length){toast('لا توجد أسئلة هنا بعد');return}
+ Qs={mode,i:0,score:0,sel:null,miss:[],saved:false,list:list.map(x=>{const ix=shuffle(x.o.map((_,j)=>j));return Object.assign({},x,{o:ix.map(j=>x.o[j]),a:ix.indexOf(x.a)})})};
+ if(!gActive()){tab='quiz';lid=null;render();scrollTo(0,0)}
+}
+function vQuiz(){
+ if(!Qs){const wc=S.wrong.length;return `<div class="card"><h3>📝 اختبار اليوم</h3><p class="mut">5 أسئلة مختلطة، وتدخل فيها أسئلة أخطأت فيها سابقاً.</p><button class="btn" style="width:100%" onclick="startQuiz('daily')">ابدأ الاختبار اليومي</button></div>
+ <div class="card"><h3>حسب المادة</h3>${Object.entries(COURSES).map(([k,c])=>`<button class="btn sec" style="width:100%;margin:4px 0;border-right:5px solid ${c.col}" onclick="startQuiz('course','${k}')">${c.ic} ${c.code} · ${c.n}</button>`).join('')}</div>
+ <div class="card"><h3>🔁 بنك أخطائي</h3><p class="mut">${wc?`لديك ${wc} سؤالاً أخطأت فيه. كررها حتى تثبت.`:'لا أخطاء مسجلة. ممتاز!'}</p><button class="btn sec" ${wc?'':'disabled'} onclick="startQuiz('wrong')">راجع أخطائي</button></div>`}
+ if(Qs.i>=Qs.list.length)return qResult();
+ const q=Qs.list[Qs.i],C=COURSES[q.c];
+ return `<button class="bk" onclick="Qs=null;render()">→ إنهاء</button><div class="card"><div class="pb"><i style="width:${Qs.i/Qs.list.length*100}%"></i></div><p class="mut">سؤال ${Qs.i+1} من ${Qs.list.length} · ${C?C.code:''}</p><div class="q" dir="auto">${esc(q.q)}</div>
+ ${q.o.map((o,j)=>`<button class="opt ${Qs.sel===null?'':j===q.a?'right':j===Qs.sel?'wrong':''}" dir="auto" onclick="qAns(${j})">${esc(o)}</button>`).join('')}
+ ${Qs.sel!==null?`<div class="tip" dir="auto">${Qs.sel===q.a?'✅ صحيح. ':'❌ الصحيح موضّح بالأخضر. '}${esc(q.e||'')}</div><button class="btn" style="width:100%" onclick="Qs.i++;Qs.sel=null;render()">${Qs.i+1>=Qs.list.length?'عرض النتيجة':'التالي ›'}</button>`:''}</div>`;
+}
+function qAns(j){if(Qs.sel!==null)return;const q=Qs.list[Qs.i];Qs.sel=j;if(j===q.a){Qs.score++;S.wrong=S.wrong.filter(x=>x!==q.id)}else{Qs.miss.push(q);if(!S.wrong.includes(q.id))S.wrong.push(q.id)}save();render()}
+function qResult(){
+ const n=Qs.list.length,p=Math.round(Qs.score/n*100);
+ if(!Qs.saved){Qs.saved=true;S.qh.push({d:dk(),s:Qs.score,n});if(gActive()){S.guide.stats.q+=n;S.guide.stats.qc+=Qs.score}if(S.qh.length>60)S.qh.shift();(S.day[dkey()]=S.day[dkey()]||{}).quiz=true;save()}
+ return `<div class="card" style="text-align:center"><div style="font-size:3em">${p>=80?'🏆':p>=50?'👍':'💪'}</div><h2>${Qs.score} / ${n} (${p}%)</h2><p class="mut">${p>=80?'ممتاز، أنت متمكن.':p>=50?'جيد، راجع الأخطاء أدناه.':'لا بأس، راجع الدرس وأعد المحاولة.'}</p></div>
+ ${Qs.miss.length?`<div class="card"><h3>أخطاؤك</h3>${Qs.miss.map(q=>`<div class="task" style="display:block" dir="auto"><b>${esc(q.q)}</b><br><span style="color:var(--ok)">✔ ${esc(q.o[q.a])}</span><br><span class="mut">${esc(q.e||'')}</span></div>`).join('')}</div>`:''}
+ <button class="btn" style="width:100%" onclick="Qs=null;render()">رجوع</button>`;
+}
+
+/* ============ البطاقات ============ */
+function startCards(mode){const l=mode==='due'?dueCards():allC();if(!l.length){toast('لا توجد بطاقات مستحقة الآن 🎉');return}Cs={list:shuffle(l),i:0,flip:false,mode};tab='cards';lid=null;render()}
+function vCards(){
+ if(!Cs){const a=allC(),mast=a.filter(c=>S.box[c.id]&&S.box[c.id].b>=3).length;return `<div class="card"><h3>🃏 بطاقات المراجعة المتباعدة</h3><p class="mut">كل بطاقة تعود إليك بعد 1 ثم 3 ثم 7 ثم 16 يوماً إذا عرفتها، وفوراً إذا نسيتها.</p>
+ <div class="row"><div class="grow">المجموع: <b>${a.length}</b></div><div class="grow">المستحق: <b>${dueCards().length}</b></div><div class="grow">المتقنة: <b>${mast}</b></div></div><p><button class="btn" onclick="startCards('due')">راجع المستحقة</button> <button class="btn sec" onclick="startCards('all')">تصفح الكل</button></p></div>`}
+ if(Cs.i>=Cs.list.length){if(Cs.mode==='due'){(S.day[dkey()]=S.day[dkey()]||{}).cards=true;save()}return `<div class="card" style="text-align:center"><div style="font-size:3em">🎉</div><h2>أنهيت البطاقات</h2><button class="btn" onclick="Cs=null;render()">رجوع</button></div>`}
+ const c=Cs.list[Cs.i],C=COURSES[c.c];
+ return `<button class="bk" onclick="Cs=null;render()">→ إنهاء</button><div class="card"><div class="pb"><i style="width:${Cs.i/Cs.list.length*100}%"></i></div><p class="mut">${C?C.ic+' '+C.code:''} · ${Cs.i+1}/${Cs.list.length}</p>
+ <div class="flash ${Cs.flip?'back':''}" dir="auto" onclick="Cs.flip=!Cs.flip;render()">${Cs.flip?esc(c.b):esc(c.f)}</div><p class="mut" style="text-align:center">${Cs.flip?'':'اضغط لإظهار الجواب'}</p>
+ ${Cs.flip?`<div class="row"><button class="btn bad grow" onclick="rate(false)">❌ لم أعرفها</button><button class="btn ok grow" onclick="rate(true)">✔ عرفتها</button></div>`:''}</div>`;
+}
+function rate(ok){const c=Cs.list[Cs.i],b=S.box[c.id]||{b:0};b.b=ok?Math.min(4,b.b+1):0;b.due=ok?Date.now()+[0,1,3,7,16][b.b]*864e5:Date.now();S.box[c.id]=b;if(!ok&&Cs.mode==='due')Cs.list.push(c);Cs.i++;Cs.flip=false;save();render()}
+
+/* ============ المنبهات ============ */
+let EA=null;
+function vAlarms(){
+ const kk=x=>{const t=alarmTime(x);return (t<'05:00'?'1':'0')+t};const sorted=S.alarms.slice().sort((a,b)=>kk(a).localeCompare(kk(b)));
+ return `<div class="bn info">ℹ️ المنبهات ترنّ <b>والصفحة مفتوحة</b> على الشاشة. لأقصى ثقة اضبط معها منبهات الهاتف الأصلية أيضاً. وإذا فُتحت الصفحة بعد موعد فاتك سأعرض لك ما فاتك.</div>
+ <div class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">⏰ منبهاتي</h3><button class="btn sm" onclick="editAlarm()">➕ جديد</button></div>
+ ${sorted.map(a=>`<div class="task"><label class="sw"><input type="checkbox" ${a.on?'checked':''} onchange="togA('${a.id}',this.checked)"><i></i></label><span class="t" onclick="editAlarm('${a.id}')" style="cursor:pointer"><b style="direction:ltr;unicode-bidi:isolate;font-size:1.3em">${alarmTime(a)}</b>${a.auto?' <span class="tag">تلقائي مع العشاء</span>':''} ${esc(a.label)}<br><span class="mut">${a.days.length===7?'كل يوم':a.days.map(d=>DN[d]).join('، ')} · ${SND[a.sound]?SND[a.sound].n:''}${a.blk?' · يبدأ الكتلة '+a.blk:''}</span></span><button class="btn sec sm" onclick="editAlarm('${a.id}')">✎</button></div>`).join('')||'<p class="mut">لا منبهات.</p>'}</div>
+ <div class="card"><h3>💡 تذكير بمعلومة دورية</h3><div class="task"><label class="sw"><input type="checkbox" ${S.set.factOn?'checked':''} onchange="S.set.factOn=this.checked;save()"><i></i></label><span class="t">إظهار بطاقة معلومة مع نغمة ناعمة</span></div>
+ <label>كل كم ساعة؟</label><div class="row">${[1,2,3,4].map(h=>`<button class="chip ${S.set.factH===h?'on':''}" onclick="S.set.factH=${h};save();render()">${h} ساعة</button>`).join('')}</div><p><button class="btn sec sm" onclick="showFact(true)">جرّب الآن</button></p></div>
+ <div class="card"><h3>🔊 الصوت</h3><label>نغمة التنبيه الافتراضية</label><div class="row">${Object.entries(SND).map(([k,s])=>`<button class="chip ${S.set.sound===k?'on':''}" onclick="S.set.sound='${k}';save();ac();play('${k}');render()">${s.n}</button>`).join('')}</div>
+ <label>مستوى الصوت</label><input type="range" min="0.1" max="1" step="0.05" value="${S.set.vol}" oninput="S.set.vol=+this.value" onchange="save();play(S.set.sound)">
+ <p class="row"><button class="btn sec sm" onclick="ac();play(S.set.sound)">▶ تجربة</button><button class="btn sec sm" onclick="askNotif()">🔔 السماح بإشعارات المتصفح</button></p></div>
+ <div class="card"><button class="btn sec sm" onclick="if(confirm('استبدال منبهاتك بالجدول الجاهز؟')){S.alarms=defAlarms();save();render()}">↺ استعادة جدول الانضباط الجاهز</button></div>`;
+}
+function togA(id,v){S.alarms.find(a=>a.id===id).on=v;save()}
+function askNotif(){try{Notification.requestPermission().then(p=>toast(p==='granted'?'تم السماح':'لم يُسمح'))}catch(e){toast('غير مدعوم')}}
+const alarmTime=a=>{if(a.blk&&a.auto){const b=dayBlocks().find(x=>x.n===a.blk);if(b)return b.t}return a.time};
+function editAlarm(id){
+ EA=id?JSON.parse(JSON.stringify(S.alarms.find(a=>a.id===id))):{id:'a'+Date.now(),time:'18:00',label:'',days:ALLDAYS.slice(),sound:S.set.sound,on:true,blk:0,auto:false,isNew:true};
+ alarmModal();
+}
+function alarmModal(){
+ openModal(`<h3>${EA.isNew?'منبه جديد':'تعديل المنبه'}</h3><label>الوصف</label><input value="${esc(EA.label)}" oninput="EA.label=this.value" placeholder="مثال: حان وقت الكتلة 1">
+ <label>ربط بكتلة دراسة (يظهر زر «ابدأ» و«أجّل» عند الرنين)</label><select onchange="EA.blk=+this.value;if(!EA.blk)EA.auto=false;alarmModal()"><option value="0" ${!EA.blk?'selected':''}>بدون — تنبيه فقط</option>${BLK.concat([{n:5}]).map(b=>`<option value="${b.n}" ${EA.blk===b.n?'selected':''}>الكتلة ${b.n}</option>`).join('')}</select>
+ ${EA.blk?`<div class="task"><label class="sw"><input type="checkbox" ${EA.auto?'checked':''} onchange="EA.auto=this.checked;alarmModal()"><i></i></label><span class="t">الوقت تلقائي: يتبع وقت العشاء يومياً</span></div>`:''}
+ ${EA.blk&&EA.auto?'<p class="mut">الوقت يُحسب يومياً من العشاء، فلا حاجة لإدخاله.</p>':`<label>الوقت</label><input type="time" value="${EA.time}" onchange="EA.time=this.value">`}
+ <label>الأيام (يوم الدراسة يبدأ 5 فجراً)</label><div class="row">${DN.map((n,i)=>`<button class="chip ${EA.days.includes(i)?'on':''}" onclick="tgD(${i})">${n}</button>`).join('')}</div>
+ <label>النغمة</label><div class="row">${Object.entries(SND).map(([k,s])=>`<button class="chip ${EA.sound===k?'on':''}" onclick="EA.sound='${k}';ac();play('${k}');alarmModal()">${s.n}</button>`).join('')}</div>
+ <div class="row" style="margin-top:14px"><button class="btn grow" onclick="saveA()">حفظ</button>${EA.isNew?'':`<button class="btn bad" onclick="delA()">حذف</button>`}<button class="btn sec" onclick="closeModal()">إلغاء</button></div>`);
+}
+function tgD(i){const k=EA.days.indexOf(i);k<0?EA.days.push(i):EA.days.splice(k,1);alarmModal()}
+function saveA(){if(!EA.label.trim())EA.label='منبه دراسة';if(!EA.days.length)EA.days=ALLDAYS.slice();const n=Object.assign({},EA);delete n.isNew;if(!n.blk)n.auto=false;const i=S.alarms.findIndex(a=>a.id===n.id);i<0?S.alarms.push(n):S.alarms[i]=n;save();closeModal();render()}
+function delA(){S.alarms=S.alarms.filter(a=>a.id!==EA.id);save();closeModal();render()}
+
+let curA=null;
+function slackNow(){
+ const pend=dayBlocks().filter(b=>!blockDone(b)&&!b.am);if(!pend.length)return 0;
+ const need=pend.reduce((s,b)=>s+b.m,0)+15*(pend.length-1),cp=S.set.cutoff.split(':').map(Number),c=cp[0]*60+cp[1],endm=c<300?c+1440:c;
+ return endm-nowStudyMin()-need;
+}
+function postInfo(a){const k=dk()+'#'+a.blk,p=S.post[k]||0;return {k,p,left:Math.max(0,S.set.snoozeMax-p)}}
+function fire(a){
+ if(a.studyOnly&&!dayBlocks().length)return;
+ if(a.blk){
+  const b0=dayBlocks().find(b=>b.n===a.blk);if(!b0||blockDone(b0)||amExpired(b0))return;
+  if(S.timer){if(S.timer.kind==='study'){toast('⏰ '+a.label+' — أكمل جلستك الحالية');ac();play('chime')}return}
+ }else if(S.timer&&S.timer.kind==='study'){toast('⏰ '+a.label);ac();play('chime');return}
+ curA=a;playLoop(a.sound||S.set.sound);try{navigator.vibrate&&navigator.vibrate([500,250,500,250,800])}catch(e){}
+ notify('⏰ '+a.label,'افتح التطبيق: ابدأ أو أجّل');
+ const bb=a.blk?dayBlocks().find(b=>b.n===a.blk):null,c=bb?COURSES[bb.c]:null;
+ let body;
+ if(bb){
+  const pi=postInfo(a),sl=slackNow();
+  body=`<p class="mut">${c.ic} ${c.code} · ${c.n} · ${bb.m} دقيقة</p>
+  <p><button class="btn" style="font-size:1.5em;padding:16px 48px" onclick="startBlock(${bb.n})">▶ ابدأ الآن</button></p>
+  <p class="mut">أو أجّل (متبقٍ ${pi.left} من ${S.set.snoozeMax} مرات)</p>
+  <p class="row" style="justify-content:center">${pi.left?S.set.snoozeOpts.map(x=>`<button class="btn sec" onclick="postpone(${x})">⏳ ${x} د</button>`).join(''):'<span class="mut">انتهت مرات التأجيل. ابدأ الآن 💪</span>'}</p>
+  <p class="${sl<0?'bn bad':'mut'}" style="margin:8px 0">هامش الوقت قبل ${S.set.cutoff}: <b dir="ltr">${sl}</b> د${sl<0?' — لن يتسع كل المقرر، ستُقتطع أواخر الكتل':''}</p>`;
+ }else body=`<p><button class="btn" style="font-size:1.3em;padding:14px 40px" onclick="stopAlarm()">إيقاف</button></p><p><button class="btn sec" onclick="snooze()">غفوة 5 دقائق</button></p>`;
+ const o=$('#ov');o.innerHTML=`<div class="ovb"><div class="big">⏰</div><div class="ot">${nowHM()}</div><h2 dir="auto">${esc(a.label)}</h2>${body}</div>`;o.style.display='flex';
+}
+function stopAlarm(){stopLoop();$('#ov').style.display='none';curA=null}
+function snooze(){const a=curA;stopAlarm();S.snz.push({at:Date.now()+5*60000,a});save();toast('ستعود بعد 5 دقائق')}
+function postpone(x){const a=curA;if(!a)return;const pi=postInfo(a);if(!pi.left)return;S.post[pi.k]=pi.p+1;stopAlarm();S.snz.push({at:Date.now()+x*60000,a:{label:a.label,sound:a.sound,blk:a.blk}});save();toast('أُجّلت '+x+' دقيقة. متبقٍ '+(pi.left-1)+' مرات تأجيل');render()}
+function snzCheck(){
+ if(!S.snz||!S.snz.length||curA)return;const now=Date.now(),due=S.snz.filter(z=>z.at<=now);
+ if(due.length){S.snz=S.snz.filter(z=>z.at>now);save();fire(due[0].a)}
+}
+function checkAlarms(){
+ const hm=nowHM(),key=dk()+hm,wd=sdate().getDay();
+ S.alarms.forEach(a=>{if(!a.on||alarmTime(a)!==hm||!a.days.includes(wd))return;const fk=a.id+key;if(S.fired[fk])return;S.fired[fk]=1;fire(a)});
+ if(Object.keys(S.fired).length>300)S.fired={};
+}
+function checkMissed(){
+ const n=new Date(),start=new Date();start.setHours(5,0,0,0);if(n<start)start.setDate(start.getDate()-1);
+ const from=Math.max(S.lastSeen||0,start.getTime()),wd=sdate().getDay(),miss=[];
+ S.alarms.forEach(a=>{if(!a.on||!a.days.includes(wd))return;
+  const at=alarmTime(a),p=at.split(':').map(Number),t=new Date(start);t.setHours(p[0],p[1],0,0);if(p[0]<5)t.setDate(t.getDate()+1);
+  const fk=a.id+dk()+at;
+  if(a.studyOnly&&!dayBlocks().length)return;
+  if(a.blk){const bb=dayBlocks().find(b=>b.n===a.blk);if(!bb||blockDone(bb))return}
+  if(t.getTime()>from&&t.getTime()<n.getTime()-60000&&!S.fired[fk]){S.fired[fk]=1;miss.push({time:at,label:a.label})}});
+ S.lastSeen=Date.now();save();
+ if(miss.length)openModal(`<h3>⚠️ فاتتك هذه المنبهات</h3>${miss.map(a=>`<div class="task"><b style="direction:ltr">${a.time}</b> <span class="t">${esc(a.label)}</span></div>`).join('')}<p class="mut">لم تكن الصفحة مفتوحة وقتها.</p>${S.timer?'':`<button class="btn" style="width:100%;margin-bottom:8px" onclick="startBlock()">▶ ابدأ الكتلة المتأخرة الآن</button>`}<button class="btn sec" style="width:100%" onclick="closeModal()">إغلاق</button>`);
+}
+
+/* تذكير المعلومات */
+function showFact(force){
+ const c=shuffle(dueCards().length?dueCards():allC())[0];if(!c)return;const C=COURSES[c.c];
+ const f=$('#fact');f.innerHTML=`<div class="card" style="border:2px solid var(--ac);box-shadow:0 6px 30px rgba(0,0,0,.5)"><div class="mut">💡 معلومة · ${C?C.ic+' '+C.code:''}</div><p dir="auto"><b>${esc(c.f)}</b></p><p dir="auto" style="color:var(--ok)">${esc(c.b)}</p><button class="btn sm" onclick="$('#fact').style.display='none'">حسناً</button></div>`;f.style.display='block';
+ ac();play('chime');S.lastFact=Date.now();save();
+}
+
+/* ============ المزيد ============ */
+function vMore(){
+ const cu=S.cust;
+ return `<div class="card"><h3>🎯 الالتزام</h3><label>الاسم</label><input value="${esc(S.set.name)}" onchange="S.set.name=this.value;save()">
+ <label>هدف الدراسة اليومي الإجباري (بالدقائق)</label><input type="number" min="15" step="15" value="${S.set.goal}" onchange="S.set.goal=Math.max(15,+this.value||120);save();render()">
+ <div class="task"><label class="sw"><input type="checkbox" ${S.set.wake?'checked':''} onchange="S.set.wake=this.checked;save();setWake(this.checked)"><i></i></label><span class="t">إبقاء الشاشة مضاءة (لتضمن رنين المنبهات)</span></div>
+ <div class="task"><label class="sw"><input type="checkbox" ${S.set.theme==='light'?'checked':''} onchange="S.set.theme=this.checked?'light':'dark';document.documentElement.setAttribute('data-theme',S.set.theme);save()"><i></i></label><span class="t">الوضع الفاتح</span></div></div>
+ ${schedCard()}${amCard()}${ishaCard()}<div class="card"><h3>➕ أضف من عندك</h3><div class="row"><button class="btn sec" onclick="addLesson()">📖 درس / ملخص</button><button class="btn sec" onclick="addCard()">🃏 بطاقة</button><button class="btn sec" onclick="addQ()">❓ سؤال</button></div>
+ <p class="mut">أضفت: ${cu.lessons.length} دروس · ${cu.cards.length} بطاقات · ${cu.qs.length} أسئلة</p>
+ ${cu.cards.map(c=>`<div class="task"><span class="t" dir="auto">🃏 ${esc(c.f)}</span><button class="btn bad sm" onclick="delCust('cards','${c.id}')">حذف</button></div>`).join('')}
+ ${cu.qs.map(c=>`<div class="task"><span class="t" dir="auto">❓ ${esc(c.q)}</span><button class="btn bad sm" onclick="delCust('qs','${c.id}')">حذف</button></div>`).join('')}</div>
+ <div class="card"><h3>💾 نسخة احتياطية</h3><p class="mut">بياناتك محفوظة داخل متصفح هذا الجهاز. صدّر نسخة من وقت لآخر، خصوصاً قبل مسح بيانات المتصفح أو نقل الملف.</p>
+ <div class="row"><button class="btn" onclick="exportD()">⬇ تصدير</button><button class="btn sec" onclick="$('#imp').click()">⬆ استيراد</button><input id="imp" type="file" accept=".json" style="display:none" onchange="importD(this.files[0])"></div>
+ <p><button class="btn bad sm" onclick="if(confirm('حذف كل بياناتك نهائياً؟')){localStorage.removeItem(K);location.reload()}">🗑 مسح كل شيء</button></p></div>`;
+}
+function exportD(){const b=new Blob([JSON.stringify(S)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='emad-study-backup-'+dk()+'.json';a.click()}
+function importD(f){if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);S=loadState(o);save();location.reload()}catch(e){toast('ملف غير صالح')}};r.readAsText(f)}
+const courseSel=()=>`<label>المادة</label><select id="mc">${Object.entries(COURSES).map(([k,c])=>`<option value="${k}">${c.code} · ${c.n}</option>`).join('')}</select>`;
+function addLesson(){openModal(`<h3>درس / ملخص جديد</h3>${courseSel()}<label>العنوان</label><input id="mt"><label>المحتوى</label><textarea id="mx" style="min-height:160px"></textarea><div class="row" style="margin-top:12px"><button class="btn grow" onclick="svLesson()">حفظ</button><button class="btn sec" onclick="closeModal()">إلغاء</button></div>`)}
+function svLesson(){const t=$('#mt').value.trim(),x=$('#mx').value.trim();if(!t||!x)return toast('أكمل الحقول');S.cust.lessons.push({id:'u'+Date.now(),c:$('#mc').value,t,body:x});save();closeModal();render()}
+function addCard(){openModal(`<h3>بطاقة جديدة</h3>${courseSel()}<label>الوجه (سؤال)</label><textarea id="mt"></textarea><label>الظهر (جواب)</label><textarea id="mx"></textarea><div class="row" style="margin-top:12px"><button class="btn grow" onclick="svCard()">حفظ</button><button class="btn sec" onclick="closeModal()">إلغاء</button></div>`)}
+function svCard(){const f=$('#mt').value.trim(),b=$('#mx').value.trim();if(!f||!b)return toast('أكمل الحقول');S.cust.cards.push({id:'kc'+Date.now(),c:$('#mc').value,f,b});save();closeModal();render()}
+function addQ(){openModal(`<h3>سؤال جديد</h3>${courseSel()}<label>السؤال</label><textarea id="mt" style="min-height:60px"></textarea>${[0,1,2,3].map(i=>`<label>الخيار ${i+1}</label><input id="o${i}">`).join('')}<label>رقم الخيار الصحيح</label><select id="ma"><option value="0">1</option><option value="1">2</option><option value="2">3</option><option value="3">4</option></select><label>شرح الجواب (اختياري)</label><input id="mx"><div class="row" style="margin-top:12px"><button class="btn grow" onclick="svQ()">حفظ</button><button class="btn sec" onclick="closeModal()">إلغاء</button></div>`)}
+function svQ(){const q=$('#mt').value.trim(),o=[0,1,2,3].map(i=>$('#o'+i).value.trim());if(!q||o.some(x=>!x))return toast('أكمل السؤال والخيارات');S.cust.qs.push({id:'qc'+Date.now(),c:$('#mc').value,l:'',q,o,a:+$('#ma').value,e:$('#mx').value.trim()});save();closeModal();render()}
+function delCust(k,id){if(!confirm('حذف؟'))return;S.cust[k]=S.cust[k].filter(x=>x.id!==id);if(k==='lessons')lid=null;save();render()}
+
+/* ============ الجلسة الموجَّهة: النظام يتحكم ويسجّل ============ */
+let GC=null,gWarn=-1,gLastPing=0,lastActive=(S.guide&&S.guide.la)||Date.now();
+const hm=ts=>{const d=new Date(ts);return p2(d.getHours())+':'+p2(d.getMinutes())};
+const gActive=()=>!!(S.guide&&!S.guide.done);
+const TT={6:['dc','de'],0:['pe','dc'],1:['de','lab'],2:['dc','pe'],3:['pe','de'],4:['lab','dc'],5:null};
+function buildPlan(ts){
+ const t=TT[new Date(ts-5*3600e3).getDay()],ALL=['dc','pe','de','lab'];
+ let segs=t?[{k:'study',c:t[0],m:90},{k:'break',m:15},{k:'study',c:t[1],m:75},{k:'break',m:15},{k:'practice',cs:t,c:t[0],m:60},{k:'break',m:15},{k:'review',c:'mix',m:40}]
+  :[{k:'test',c:'mix',m:60},{k:'break',m:15},{k:'practice',cs:ALL,c:'dc',weak:true,m:75},{k:'break',m:15},{k:'practice',cs:ALL,c:'pe',m:60},{k:'break',m:15},{k:'review',c:'mix',m:40}];
+ const [eh,em]=S.set.endBy.split(':').map(Number),end=new Date(ts);end.setHours(eh,em,0,0);
+ if(end.getTime()<=ts&&new Date(ts).getHours()>=5)end.setDate(end.getDate()+1);
+ const avail=Math.max(20,(end.getTime()-ts)/60000);let note='';
+ const tot=()=>segs.reduce((a,s)=>a+s.m,0);
+ if(tot()>avail){
+  if(avail<50){const f=segs[0];segs=[{k:f.k,c:f.c,cs:f.cs,m:Math.max(10,Math.round(avail-15))},{k:'review',c:'mix',m:Math.min(15,Math.max(5,Math.round(avail-10)))}];note='الوقت المتبقي قصير فاختُصرت الجلسة إلى كتلة واحدة + مراجعة.'}
+  else{const fx=segs.filter(s=>s.k==='break'||s.k==='review').reduce((a,s)=>a+s.m,0),wk=tot()-fx,f=Math.max(.3,(avail-fx)/wk);segs.forEach(s=>{if(s.k!=='break'&&s.k!=='review')s.m=Math.max(15,Math.round(s.m*f))});note='ضُغطت الكتل لتناسب الوقت حتى '+S.set.endBy+'.'}
+ }
+ return {segs,note}}
+function notStarted(){const n=new Date(),m=n.getHours()*60+n.getMinutes(),[h,mm]=S.set.start.split(':').map(Number);return !(S.guide&&S.guide.day===dkey())&&m>=h*60+mm+30}
+function segLabel(s){const C=COURSES[s.c],cn=C?C.ic+' '+C.code:'';
+ return s.k==='study'?`📖 دراسة ${cn} (${s.m} د)`:s.k==='break'?`☕ استراحة (${s.m} د)`:s.k==='practice'?`🧮 حل مسائل وتطبيق${s.weak?' (نقاط الضعف)':''} (${s.m} د)`:s.k==='review'?`🔁 مراجعة ختامية: بطاقات + اختبار (${s.m} د)`:`📝 اختبار الأسبوع (${s.m} د)`}
+function nightsAvg(){const a=S.nights.slice(-7);if(!a.length)return '';return `<p class="mut">التزامك في آخر ${a.length} ليالٍ: <b>${Math.round(a.reduce((x,n)=>x+(n.planned?n.logged/n.planned:0),0)/a.length*100)}%</b></p>`}
+function startCard(){
+ const g=S.guide,tn=g&&g.day===dkey();
+ if(gActive())return `<div class="card" style="border:2px solid var(--ok)"><h3>🎯 الجلسة جارية</h3><button class="btn ok big-start" onclick="tab='guide';render()">ادخل شاشة الجلسة</button></div>`;
+ if(tn&&g.done){const n=S.nights[S.nights.length-1]||{};return `<div class="card" style="border:2px solid var(--ok)"><h3>✅ أنهيت جلسة الليلة</h3><p>سُجّل <b>${n.logged||0}</b> دقيقة من <b>${n.planned||0}</b>.</p><button class="btn sec" onclick="tab='guide';render()">عرض الملخص</button> <button class="btn sec" onclick="startGuide()">جلسة إضافية</button></div>`}
+ const now=Date.now(),[h,m]=S.set.start.split(':').map(Number),ps=new Date();ps.setHours(h,m,0,0);
+ const st=(new Date().getHours()>=5&&now<ps.getTime())?ps.getTime():now,b=buildPlan(st);let t=st;
+ const rows=b.segs.map(s=>{const a=t;t+=s.m*60000;return `<div class="tl"><b>${hm(a)} – ${hm(t)}</b><span>${segLabel(s)}</span></div>`}).join('');
+ return `<div class="card" style="border:2px solid var(--ac)"><h3>🌙 جلسة الليلة — ${DN[new Date(st-5*3600e3).getDay()]}</h3><p class="mut">اضغط «ابدأ» فقط. التطبيق يدير المؤقت والاستراحات والمحتوى والتسجيل بدقة، ويخصم أي وقت خمول.</p>${rows}${b.note?`<p class="mut">⚠️ ${b.note}</p>`:''}<button class="btn big-start" style="margin-top:10px" onclick="startGuide()">▶ ابدأ جلسة الليلة</button></div>`}
+function startGuide(){
+ if(gActive()){tab='guide';render();return}
+ const now=Date.now();
+ if(S.guide&&S.guide.done&&S.guide.day===nightKey(now)&&!confirm('أنهيت جلسة الليلة. هل تريد بدء جلسة إضافية؟'))return;
+ const b=buildPlan(now),[h,m]=S.set.start.split(':').map(Number),ps=new Date(now);ps.setHours(h,m,0,0);
+ let late=Math.round((now-ps.getTime())/60000);if(new Date(now).getHours()<5||late<0||late>360)late=0;
+ S.guide={day:nightKey(now),start:now,segs:b.segs,note:b.note,pausedMs:0,pSince:null,idle:b.segs.map(()=>0),logged:b.segs.map(()=>false),lastTick:now,la:now,late,pauses:0,done:false,lid:{},by:{},lm:0,cur:0,stats:{q:0,qc:0,ex:0,exok:0}};
+ lastActive=now;GC=null;Qs=null;Cs=null;gWarn=-1;tab='guide';ac();setWake(true);play('bell');save();render();scrollTo(0,0)}
+const gEl=()=>{const g=S.guide,n=g.pSince||Date.now();return n-g.start-g.pausedMs};
+function gPos(){const g=S.guide,e=gEl()/60000;let a=0;for(let i=0;i<g.segs.length;i++){const m=g.segs[i].m;if(e<a+m)return{i,t:(e-a)*60,rem:(a+m-e)*60,e};a+=m}return{i:g.segs.length,t:0,rem:0,e}}
+function gInfo(){const g=S.guide,tot=g.segs.reduce((a,s)=>a+s.m,0)*60,el=Math.min(tot,gEl()/1000),id=Math.round(g.idle.reduce((a,b)=>a+b,0)/60000);return 'المتبقي للجلسة '+fmt(tot-el)+(id?' · خمول مخصوم '+id+' د':'')}
+function addIdle(t0,t1){const g=S.guide,e0=(t0-g.start-g.pausedMs)/60000,e1=(t1-g.start-g.pausedMs)/60000;let a=0;g.segs.forEach((s,i)=>{const b=a+s.m;if(s.k!=='break'){const o=Math.min(e1,b)-Math.max(e0,a);if(o>0)g.idle[i]+=o*60000}a=b})}
+function gComplete(k,pm){const g=S.guide;if(g.logged[k])return;g.logged[k]=true;const s=g.segs[k];if(s.k==='break')return;
+ const m=Math.max(0,(pm!=null?pm:s.m)-g.idle[k]/60000);
+ if(m>0){S.sess.push({d:g.day,c:s.c,m:Math.round(m*10)/10});g.lm+=m;g.by[s.c]=(g.by[s.c]||0)+m}
+ if(s.k==='study'&&g.lid[k]&&(pm==null||pm>=s.m*.6)){S.done[g.lid[k]]=true;(S.day[g.day]=S.day[g.day]||{}).lesson=true}
+ save()}
+function gFinish(){const g=S.guide;if(g.done)return;g.segs.forEach((s,k)=>gComplete(k));
+ const planned=g.segs.filter(s=>s.k!=='break').reduce((a,s)=>a+s.m,0);
+ S.nights.push({day:g.day,planned,logged:Math.round(g.lm),idle:Math.round(g.idle.reduce((a,b)=>a+b,0)/60000),paused:Math.round(g.pausedMs/60000),late:g.late,q:g.stats.q,qc:g.stats.qc,ex:g.stats.ex,exok:g.stats.exok});
+ if(S.nights.length>60)S.nights.shift();g.done=true;setWake(S.set.wake);GC=null;Qs=null;Cs=null;
+ play('melody');notify('انتهت جلسة الليلة','افتح التطبيق لرؤية الملخص');save();tab='guide';render();scrollTo(0,0)}
+function gAbort(){if(!confirm('إنهاء الجلسة الآن؟ سيُسجَّل ما أنجزته فقط، وتُحتسب نسبة التزامك على الخطة كاملة.'))return;
+ const g=S.guide,p=gPos();for(let k=0;k<p.i&&k<g.segs.length;k++)gComplete(k);
+ if(p.i<g.segs.length){gComplete(p.i,p.t/60);for(let k=p.i+1;k<g.segs.length;k++)g.logged[k]=true}
+ gFinish()}
+function gPause(){const g=S.guide;if(g.pSince)return;g.pSince=Date.now();g.pauses=(g.pauses||0)+1;save();render()}
+function gResume(){const g=S.guide,n=Date.now();g.pausedMs+=n-g.pSince;g.pSince=null;g.lastTick=n;lastActive=n;save();render()}
+function gTick(){
+ const g=S.guide,now=Date.now();
+ if(g.pSince){g.lastTick=now;return}
+ const dt=now-g.lastTick;g.lastTick=now;const p=gPos();
+ if(p.i<g.segs.length&&g.segs[p.i].k!=='break'){
+  const thr=S.set.idleMin*60000,ia=now-lastActive;
+  if(ia>thr){const add=Math.min(dt,ia-thr);if(add>0)addIdle(now-add,now);if(now-gLastPing>120000){gLastPing=now;play('beep');notify('هل ما زلت تدرس؟','المس الشاشة، الوقت يُخصم الآن')}}
+  else if(ia>thr*.75&&now-gLastPing>thr){gLastPing=now;play('beep');toast('المس الشاشة لتأكيد أنك تدرس')}
+ }
+ g.la=lastActive;
+ if(p.i!==g.cur){for(let k=g.cur;k<Math.min(p.i,g.segs.length);k++)gComplete(k);g.cur=p.i;if(p.i>=g.segs.length){gFinish();return}gSeg(p.i);return}
+ if(p.rem<=60&&gWarn!==p.i&&g.segs[p.i].m>3){gWarn=p.i;play('digital')}
+ const el=$('#gt');if(el){const s=g.segs[p.i];el.textContent=fmt(p.rem);$('#gp').style.width=((s.m*60-p.rem)/(s.m*60)*100)+'%';$('#gi').textContent=gInfo()}
+}
+function gSeg(i){const g=S.guide,s=g.segs[i];play({study:'bell',break:'chime',practice:'digital',review:'melody',test:'digital'}[s.k]||'bell');notify(segLabel(s),'بدأت كتلة جديدة');gInit(i);render();scrollTo(0,0)}
+function pickLesson(c){const ls=allLessons().filter(l=>l.c===c);return ls.find(l=>!S.done[l.id])||ls.find(l=>S.weakL[l.id])||ls[Math.floor(Date.now()/864e5)%ls.length]}
+function gInit(i){const g=S.guide,s=g.segs[i];GC={i,sel:null,rev:false,q:[],qi:0,ph:''};Qs=null;Cs=null;
+ if(s.k==='study'){const L=g.lid[i]?allLessons().find(x=>x.id===g.lid[i]):pickLesson(s.c);if(L){g.lid[i]=L.id;GC.L=L.id}}
+ else if(s.k==='practice')GC.q=buildPractice(s);
+ else if(s.k==='review'){const d=dueCards();if(d.length){Cs={list:shuffle(d).slice(0,15),i:0,flip:false,mode:'due'};GC.ph='cards'}else{GC.ph='quiz';startQuiz('daily')}}
+ else if(s.k==='test'){GC.ph='quiz';startQuiz('week')}
+ save()}
+function buildPractice(s){
+ const cs=s.cs||['dc'];let ls=allLessons().filter(l=>cs.includes(l.c)&&l.ex);const dn=ls.filter(l=>S.done[l.id]);if(dn.length)ls=dn;
+ ls=shuffle(ls);if(s.weak)ls.sort((a,b)=>(S.weakL[b.id]||0)-(S.weakL[a.id]||0));
+ let qs=shuffle(allQ().filter(q=>cs.includes(q.c)));if(s.weak)qs.sort((a,b)=>(S.wrong.includes(b.id)?1:0)-(S.wrong.includes(a.id)?1:0));
+ qs=qs.map(x=>{const ix=shuffle(x.o.map((_,j)=>j));return {t:'q',id:x.id,c:x.c,q:x.q,e:x.e,o:ix.map(j=>x.o[j]),a:ix.indexOf(x.a)}});
+ const out=[];let qi=0;ls.forEach(l=>{out.push({t:'ex',L:l.id,c:l.c});for(let k=0;k<2&&qi<qs.length;k++)out.push(qs[qi++])});while(qi<qs.length)out.push(qs[qi++]);return out}
+function vGuide(){
+ const g=S.guide;if(!g)return vToday();
+ if(g.done)return gSummary();
+ const p=gPos(),s=g.segs[p.i];if(!s){gFinish();return gSummary()}
+ if(!GC||GC.i!==p.i)gInit(p.i);
+ const nx=g.segs[p.i+1];let body;
+ if(g.pSince)body=`<div class="card" style="text-align:center"><h2>⏸ متوقف</h2><p class="mut">الوقت لا يُحتسب أثناء التوقف. عُد عندما تكون جاهزاً.</p><button class="btn ok big-start" onclick="gResume()">▶ استئناف</button></div>`;
+ else if(s.k==='study')body=gBodyStudy();
+ else if(s.k==='break')body=`<div class="card" style="text-align:center"><div style="font-size:4em">☕</div><h2>استراحة</h2><p>قم وتحرّك، اشرب ماء، ابتعد عن الشاشة، ولا تفتح مواقع التواصل.</p>${nx?`<p class="mut">التالي: ${segLabel(nx)}</p>`:''}</div>`;
+ else if(s.k==='practice')body=gBodyPractice();
+ else body=gBodyQuizFlow();
+ const pr=(s.m*60-p.rem)/(s.m*60)*100;
+ return `<div class="gd"><div class="gh"><div class="card"><div class="row" style="justify-content:space-between"><b>${segLabel(s)}</b><span class="mut">${p.i+1}/${g.segs.length}</span></div><div class="gt" id="gt">${fmt(p.rem)}</div><div class="pb"><i id="gp" style="width:${pr}%"></i></div><div class="row" style="justify-content:space-between;margin-top:6px"><span class="mut" id="gi">${gInfo()}</span><span><button class="btn sec sm" onclick="gPause()">⏸ طارئ</button> <button class="btn sec sm" onclick="gAbort()">إنهاء مبكر</button></span></div></div></div>${g.note&&p.i===0?`<div class="bn info">⚠️ ${g.note}</div>`:''}${body}</div>`}
+function gBodyStudy(){const L=allLessons().find(x=>x.id===GC.L);if(!L)return '<div class="card">لا يوجد درس لهذه المادة. أضف درساً من «المزيد».</div>';
+ return `<div class="tip">📖 اقرأ الدرس بتركيز، ثم حلّ المثال على ورقة قبل أن تنظر إلى الحل. يُسجَّل الدرس تلقائياً عند نهاية الكتلة.</div>`+vLesson(L)}
+function gBodyQuizFlow(){
+ if(GC.ph==='cards'){if(Cs)return vCards();GC.ph='quiz';startQuiz('daily')}
+ if(GC.ph==='quiz'){if(Qs)return vQuiz();GC.ph='wrong';if(S.wrong.length)startQuiz('wrong')}
+ if(GC.ph==='wrong'){if(Qs)return vQuiz();GC.ph='free'}
+ return `<div class="card" style="text-align:center"><div style="font-size:3em">✍️</div><h3>أنهيت الجزء التفاعلي</h3><p>استعمل ما تبقى من الوقت: لخّص ما تعلمته الليلة في 5 أسطر على ورقة بدون النظر، ودوّن أي نقطة لم تفهمها لتسألني عنها.</p></div>`}
+function gBodyPractice(){
+ const s=S.guide.segs[GC.i];
+ if(GC.qi>=GC.q.length)GC.q=GC.q.concat(buildPractice(s));
+ const it=GC.q[GC.qi];if(!it)return '<div class="card">لا توجد تمارين بعد. أضف أسئلة من «المزيد».</div>';
+ const C=COURSES[it.c],n=GC.qi+1;
+ if(it.t==='ex'){const L=allLessons().find(x=>x.id===it.L);
+  return `<div class="card"><p class="mut">تمرين تطبيقي ${n} · ${C?C.code:''} · ${esc(L.t)}</p><div class="q">${L.ex.q}</div><p class="mut">حلّه على الورق بخطوات الدرس أولاً، ولا تنظر للحل قبل أن تحاول.</p>${GC.rev?`<ol class="steps">${L.ex.a.map(x=>`<li>${x}</li>`).join('')}</ol><div class="row"><button class="btn ok grow" onclick="gEx(true)">✔ حللتها صح</button><button class="btn bad grow" onclick="gEx(false)">✖ أخطأت أو لم أستطع</button></div>`:`<button class="btn" style="width:100%" onclick="GC.rev=true;render()">أظهر الحل</button>`}</div>`}
+ return `<div class="card"><p class="mut">سؤال ${n} · ${C?C.code:''}</p><div class="q" dir="auto">${esc(it.q)}</div>${it.o.map((o,j)=>`<button class="opt ${GC.sel===null?'':j===it.a?'right':j===GC.sel?'wrong':''}" dir="auto" onclick="gQ(${j})">${esc(o)}</button>`).join('')}${GC.sel!==null?`<div class="tip" dir="auto">${GC.sel===it.a?'✅ ':'❌ '}${esc(it.e||'')}</div><button class="btn" style="width:100%" onclick="GC.qi++;GC.sel=null;render()">التالي ›</button>`:''}</div>`}
+function gQ(j){if(GC.sel!==null)return;const it=GC.q[GC.qi],g=S.guide;GC.sel=j;g.stats.q++;if(j===it.a){g.stats.qc++;S.wrong=S.wrong.filter(x=>x!==it.id)}else if(!S.wrong.includes(it.id))S.wrong.push(it.id);save();render()}
+function gEx(ok){const it=GC.q[GC.qi],g=S.guide;g.stats.ex++;if(ok){g.stats.exok++;if(S.weakL[it.L]){S.weakL[it.L]--;if(S.weakL[it.L]<=0)delete S.weakL[it.L]}}else S.weakL[it.L]=(S.weakL[it.L]||0)+1;GC.qi++;GC.rev=false;save();render()}
+function gSummary(){
+ const g=S.guide,n=S.nights[S.nights.length-1]||{},sc=n.planned?Math.round(n.logged/n.planned*100):0;
+ const by=Object.entries(g.by||{}).map(([k,m])=>{const c=COURSES[k];return `<div class="task"><span class="t">${c?c.ic+' '+c.code:'📚 مراجعة واختبار'}</span><b>${Math.round(m)} د</b></div>`}).join('');
+ const ls=Object.values(g.lid||{}).map(id=>{const L=allLessons().find(x=>x.id===id);return L?`<li>${esc(L.t)}</li>`:''}).join('');
+ return `<div class="card" style="text-align:center"><div style="font-size:3.5em">${sc>=90?'🏆':sc>=70?'👍':'💪'}</div><h2>ملخص جلسة الليلة</h2><h1 style="margin:.1em;color:var(--ac)">${sc}%</h1><p class="mut">نسبة الالتزام: المسجَّل ÷ المخطط</p></div>
+ <div class="card"><h3>📊 الأرقام الدقيقة</h3>
+ <div class="task"><span class="t">وقت دراسة مسجَّل</span><b>${n.logged||0} من ${n.planned||0} د</b></div>
+ <div class="task"><span class="t">خمول مخصوم</span><b>${n.idle||0} د</b></div>
+ <div class="task"><span class="t">توقف طارئ</span><b>${n.paused||0} د (${g.pauses||0} مرة)</b></div>
+ <div class="task"><span class="t">التأخر عن موعد البدء</span><b>${n.late||0} د</b></div>
+ <div class="task"><span class="t">أسئلة صحيحة</span><b>${n.qc||0}/${n.q||0}</b></div>
+ <div class="task"><span class="t">تمارين حللتها صح</span><b>${n.exok||0}/${n.ex||0}</b></div></div>
+ ${by?`<div class="card"><h3>⏱️ التوزيع</h3>${by}</div>`:''}
+ ${ls?`<div class="card"><h3>📖 دروس أنهيتها الليلة</h3><ol class="steps">${ls}</ol></div>`:''}
+ <button class="btn big-start" onclick="go('today')">رجوع للرئيسية</button>`}
+
+/* ============ المحرك الزمني ============ */
+function tick(){
+ checkAlarms();if(gActive())gTick();
+ if(S.timer){const t=S.timer,e=elapsed();const el=$('#tm');if(el)el.textContent=fmt(t.target?t.target*60-e/1000:e/1000);if(t.target&&t.since&&e>=t.target*60000)tFinish(true)}
+ snzCheck();pillUpd();const live=todayMin()+(S.timer&&S.timer.kind==='study'?elapsed()/60000:0),rm=$('#rm'),rc=$('#ringc');if(rm)rm.textContent=Math.floor(live);if(rc){const C=2*Math.PI*52;rc.setAttribute('stroke-dashoffset',C*(1-Math.min(100,(goalFor(sdate())?live/goalFor(sdate())*100:100))/100))}
+ if(S.set.factOn){if(!S.lastFact){S.lastFact=Date.now();save()}else if(Date.now()-S.lastFact>=S.set.factH*3600000&&!curA&&!(S.timer&&S.timer.kind==='study')&&!gActive())showFact()}
+ if(Date.now()-lastSave>20000){S.lastSeen=Date.now();save();lastSave=Date.now()}
+}
+document.addEventListener('pointerdown',()=>{ac()},{once:true});
+['pointerdown','keydown','touchstart','scroll','wheel'].forEach(ev=>addEventListener(ev,()=>{lastActive=Date.now()},{passive:true,capture:true}));
+if(gActive())tab='guide';
+render();checkMissed();setInterval(tick,1000);tick();
+if(S.set.wake||S.timer)setWake(true);
+</script>
+<script>if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}</script>
+</body>
+</html>
